@@ -1,5 +1,0 @@
-{{extend 'layout.html'}}
-<form>
-	<textarea name="script"></textarea>
-	<input type="submit" value="analyse" />
-</form>
