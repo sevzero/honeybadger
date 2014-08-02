@@ -1,0 +1,18 @@
+{{extend 'layout.html'}}
+<table>
+	<tr>
+		<td>Version</td>
+		<td>{{=version}}</td>
+	</tr>
+	<tr>
+		<td>Author</td>
+		<td>{{=author}}</td>
+	</tr>
+	<tr>
+		<td>Contact</td>
+		<td>{{=contact}}</td>
+	</tr>
+</table>
+<div class="copyright">
+	<br />This application is free software released under the <a href="{{=URL('static', 'license')}}">GNU General Public License</a>.
+</div>

@@ -1,0 +1,20 @@
+{{extend 'layout.html'}}
+<div>
+	Honeybadger has dispatched your sample to one of its minions for analysis. You will be automatically redirected to the results page when analysis has been completed.
+</div>
+<div class="analysis_status">
+	<div>
+		Status: <span id="status">queued</span>
+		<br /><img src="{{=URL('static', 'images/processing.gif')}}" />
+	</div>
+</div>
+<script>
+	window.setInterval(function(){
+	  $.get("{{=URL('check', args=[submission_id])}}", function( data ){
+			$('#status').html(data);
+		  if (data == 'completed'){
+			  window.location = "{{=URL('result', args=[submission_id])}}";
+		  }
+		});
+	}, 1000);
+</script>

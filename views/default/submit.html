@@ -1,0 +1,54 @@
+{{extend 'layout.html'}}
+<form method="post" style="display: inline;" onsubmit="return checkFields()">
+	{{=INPUT(_name='title', _placeholder="Title", _style="width:100%;")}}
+	{{=TEXTAREA(_name='sample', _placeholder="Sample goes here :)", _style="width:100%; height:400px;", requires=IS_NOT_EMPTY())}}
+	<span>
+		<h3 class="showlink">Advanced options</h3>
+		<div class="foldme" style="display: none;">
+			<div class="honeybadger_table">
+			<table>
+				<tr>
+					<td style="border-right: 0;">Browser</td>
+					<td style="border-left: 0;border-right: 0;"></td>
+					<td style="border-left: 0;"></td>
+					<td>Java</td>
+					<td>Flash</td>
+					<td>Adobe</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td style="border-right: 0;">I'm feeling lucky</td>
+					<td style="border-left: 0; border-right: 0;"><img src="{{=URL('static', 'images/icons/Unknown.png')}}" /></td>
+					<td style="border-left: 0;"><img src="{{=URL('static', 'images/icons/Unknown.png')}}" /></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td><input type="radio" name="browser" value="0" checked="true"/></td>
+				</tr>
+				{{for i, browser in enumerate(browsers):}}
+					{{browserInfo = util.identifyBrowser(browser.useragent)}}
+					<tr>
+						<td style="border-right: 0;">{{=browser.useragent}}</td>
+						<td style="border-left: 0; border-right: 0; width: 1px;"><img src="{{=URL('static', 'images/icons/' + browserInfo['os'] + '.png')}}" /></td>
+						<td style="border-left: 0; width: 1px;"><img src="{{=URL('static', 'images/icons/' + browserInfo['browser'] + '.png')}}" /></td>
+						<td>{{=browser.java_version}}</td>
+						<td>{{=browser.flash_version}}</td>
+						<td>{{=browser.adobe_version}}</td>
+						<td><input type="radio" name="browser" value="{{=browser.id}}" /></td>
+					</tr>
+				{{pass}}
+			</table>
+			</div>
+			<select id="format" name="format">
+				<option value="auto">Autodetect format</option>
+				<option value="js">Javascript</option>
+				<option value="html">HTML</option>
+			</select>
+			{{=INPUT(_name="analysis_time", _placeholder="Analysis time (seconds)")}}
+		</div>
+	</span>
+	<input type="submit" id="form_submit" value="Analyse" />
+</form>
+<form style="display: inline;" action="{{=URL('history')}}">
+	<input type="submit" value="History" />
+</form>

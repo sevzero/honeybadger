@@ -1,0 +1,61 @@
+{{extend 'layout.html'}}
+<div style="margin-top: -20px; margin-bottom: 20px;">
+	<form style="display: inline;" action="{{=URL('history')}}">
+		<input type="submit" value="Back to history" />
+	</form>
+	<form style="display: inline;" action="{{=URL('submit')}}">
+		<input type="submit" value="Submit another sample" />
+	</form>
+</div>
+{{if scripts:}}
+<div>
+	<h2 class="boringfoldlink">scripts ({{=len(scripts)}})</h2>
+	{{for script in scripts:}}
+	<div class="foldme">
+		<pre>{{=script}}</pre>
+	</div>
+	{{pass}}
+</div>
+{{pass}}
+{{if errors:}}
+<div>
+	<h2 class="boringfoldlink">errors ({{=len(errors)}})</h2>
+	{{for error in errors:}}
+	<div class="foldme">
+		<pre>{{=error}}</pre>
+	</div>
+	{{pass}}
+</div>
+{{pass}}
+{{if evals:}}
+<div>
+	<h2 class="boringfoldlink">evals ({{=len(evals)}})</h2>
+	{{for eval in evals:}}
+	<div class="foldme">
+		<pre>{{=eval}}</pre>
+	</div>
+	{{pass}}
+</div>
+{{pass}}
+{{if writes:}}
+<div>
+	<h2 class="boringfoldlink">writes ({{=len(writes)}})</h2>
+	{{for write in writes:}}
+		<div class="foldme">
+			<pre>{{=write}}</pre>
+		</div>
+	{{pass}}
+</div>
+{{pass}}
+{{if dom_changes:}}
+	{{for tag in sorted(dom_changes.keys()):}}
+		<div>
+			<h2 class="boringfoldlink">{{=tag.lower()+'s'}} ({{=len(dom_changes[tag])}})</h2>
+			<div class="foldme">
+				{{for code in dom_changes[tag]:}}
+					<pre>{{=code}}</pre>
+				{{pass}}
+			</div>
+		</div>
+	{{pass}}
+{{pass}}
