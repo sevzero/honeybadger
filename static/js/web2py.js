@@ -482,6 +482,9 @@
     /* replace element's html with the 'data-disable-with' after storing original html
      * and prevent clicking on it */
     disableElement: function (el) {
+	  if (el.hasClass('nodisable')){
+        return;
+	  }
       el.addClass('disabled');
       var method = el.prop('type') == 'submit' ? 'val' : 'html';
       var disable_with_message = (typeof w2p_ajax_disable_with_message != 'undefined') ? w2p_ajax_disable_with_message : "Working...";

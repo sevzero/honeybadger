@@ -9,7 +9,7 @@ AUTHOR = 'Russell Hole'
 CONTACT = 'russell.hole+honeybadger@gmail.com'
 
 def index():
-	redirect(URL('submit'))
+	return dict()
 
 def submit():
 	msg = ''
