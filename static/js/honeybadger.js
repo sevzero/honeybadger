@@ -15,7 +15,7 @@ function honeybadger_log(type, msg){
 	else{// code for IE6, IE5
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	}
-    xmlhttp.open("GET", honeybadger_reporting_url+"?submission_id="+honeybadger_submission_id+"&type="+type+"&msg="+escape(msg), false);
+    xmlhttp.open("GET", honeybadger_reporting_url+"?submission_id="+honeybadger_submission_id+"&type="+type+"&msg="+escape(msg).replace('+', '%2B'), false);
     xmlhttp.send(null);
     return xmlhttp.responseText;
 }
