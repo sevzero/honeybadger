@@ -17,6 +17,9 @@ class Payload:
 		if (not '<script' in code and not '<html' in code) or code_format == 'js':
 			self.code = '<html><head>' + html_bootstrap_js + '</head><body><script>'+code+'</script></body></html>'
 			return
+		if code.startswith('<script'):
+			self.code = '<html><head>' + html_bootstrap_js + '</head><body>'+code+'</body></html>'
+			return
 		if '<head' in code:
 			self.code = re.sub('< *head[^>]*>', '<head>' + html_bootstrap_js, code)
 			return
