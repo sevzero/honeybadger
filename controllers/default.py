@@ -4,7 +4,7 @@ from payload_builder import Payload
 import json
 import util
 
-VERSION = "v1.0"
+VERSION = "v1.1"
 AUTHOR = 'Russell Hole'
 CONTACT = 'russell.hole+honeybadger@gmail.com'
 
