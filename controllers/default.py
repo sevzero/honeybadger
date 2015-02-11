@@ -7,6 +7,8 @@ import util
 VERSION = "v1.2"
 AUTHOR = 'Russell Hole'
 CONTACT = 'russell.hole+honeybadger@gmail.com'
+WEBSITE = 'https://github.com/sevzero/honeybadger'
+
 PRODUCTION = False
 
 def index():
@@ -119,7 +121,8 @@ def checkforjobs():
 	db(db.browsers.id==browser_id).update(last_seen=datetime.datetime.now())
 	job = db((db.submissions.state=='queued') & ((db.submissions.browser_id==browser_id) | (db.submissions.browser_id==None))).select(db.submissions.id, db.submissions.browser_id).first()
 	if not job:
-		return "cake"
+		return "muffin"
+	db(db.submissions.id==job['id']).update(started=datetime.datetime.now(), state='processing', browser_id=browser_id)
 	return job['id']
 
 def result():
@@ -142,7 +145,7 @@ def result():
 	return dict(evals=evals, writes=writes, dom_changes=dom_changes, scripts=scripts, errors=errors)
 
 def about():
-	return dict(version=VERSION, author=AUTHOR, contact=CONTACT)
+	return dict(version=VERSION, author=AUTHOR, contact=CONTACT, website=WEBSITE)
 
 def check():
 	if not request.args:
