@@ -98,6 +98,27 @@ def report():
 		db.errors.insert(submission_id=submission_id, error=request.vars.msg)
 	return None
 
+def checkforjobs():
+	browser_hash = hashlib.md5(':'.join((request.vars.useragent,
+							  request.vars.flash_version,
+							  request.vars.java_version,
+							  request.vars.adobe_version
+							  ))).hexdigest()
+
+	browser_id = db(db.browsers.hash==browser_hash).select(db.browsers.id).first()
+	if not browser_id:
+		browser_id = db.browsers.insert(hash=browser_hash,
+							useragent=request.vars.useragent,
+							flash_version=request.vars.flash_version,
+							java_version=request.vars.java_version,
+							adobe_version=request.vars.adobe_version,
+							)
+	db(db.browsers.id==browser_id).update(last_seen=datetime.datetime.now())
+	job = db((db.submissions.state=='queued') & ((db.submissions.browser_id==browser_id) | (db.submissions.browser_id==None))).select(db.submissions.id, db.submissions.browser_id).first()
+	if not job:
+		return "cake"
+	return job['id']
+
 def result():
 	if not request.args:
 		return redirect(URL('submit'))

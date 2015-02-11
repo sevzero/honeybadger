@@ -3,32 +3,31 @@
 <div>
 	I don't have any jobs for you yet minion, come back later.
 </div>
-<form id="browserinfo" method="post" style="display: none;">
+<form id="browserinfo" method="post" action="checkforjobs" style="display: none;">
 	<input type="text" id="useragent"     name="useragent"     />
 	<input type="text" id="flash_version" name="flash_version" />
 	<input type="text" id="java_version"  name="java_version"  />
 	<input type="text" id="adobe_version" name="adobe_version" />
 </form>
 <script>
+	
+	browserinfo = {};
+	browserinfo.useragent = navigator.userAgent
+	browserinfo.flash_version = PluginDetect.getVersion("flash");
+	browserinfo.java_version = PluginDetect.getVersion("java");
+	browserinfo.adobe_version = PluginDetect.getVersion("adobe");
 
-	// Fill out form with detected plugin values
-	$('#useragent').val(navigator.userAgent)
-	flash_version = PluginDetect.getVersion("flash");
-	java_version = PluginDetect.getVersion("java");
-	adobe_version = PluginDetect.getVersion("adobe");
-
-	if (flash_version != null)
-		$('#flash_version').val(flash_version);
-
-	if (java_version != null)
-		$('#java_version').val(java_version);
-
-	if (adobe_version != null)
-		$('#adobe_version').val(adobe_version);
-
-	// Wait 3 seconds and submit
 	window.setInterval(function(){
-	  $('#browserinfo').submit();
-	}, 3000);
+		post = $.post("{{=URL('checkforjobs')}}", browserinfo);
+		post.done(function(data){
+			console.log(data);
+			if (data != 'cake'){
+				w = window.open("{{=URL('analyse')}}/"+data)
+				window.setTimeout(function(w){
+					w.close();
+				}, 4000, w);
+			}
+		});
+	}, 2000);
 
 </script>
