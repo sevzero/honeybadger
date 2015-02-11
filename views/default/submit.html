@@ -3,40 +3,47 @@
 	{{=INPUT(_name='title', _placeholder="Title", _style="width:100%;")}}
 	{{=TEXTAREA(_name='sample', _placeholder="Sample goes here :)", _style="width:100%; height:400px;", requires=IS_NOT_EMPTY())}}
 	<span>
-		<h3 class="showlink">Advanced options</h3>
-		<div class="foldme" style="display: none;">
-			<div class="honeybadger_table">
-			<table class="table table-bordered">
-				<tr>
-					<td style="border-right: 0;">Browser</td>
-					<td style="border-left: 0;border-right: 0;"></td>
-					<td style="border-left: 0;"></td>
-					<td>Java</td>
-					<td>Flash</td>
-					<td>Adobe</td>
-					<td>&nbsp;</td>
-				</tr>
-				{{for i, browser in enumerate(browsers):}}
-					{{browserInfo = util.identifyBrowser(browser.useragent)}}
+		{{if browsers:}}
+			<table class="table table-bordered table-hover table-striped">
+				<thead>
 					<tr>
-						<td style="border-right: 0;">{{=browser.useragent}}</td>
-						<td style="border-left: 0; border-right: 0; width: 1px;"><img src="{{=URL('static', 'images/icons/' + browserInfo['os'] + '.png')}}" /></td>
-						<td style="border-left: 0; width: 1px;"><img src="{{=URL('static', 'images/icons/' + browserInfo['browser'] + '.png')}}" /></td>
-						<td>{{=browser.java_version}}</td>
-						<td>{{=browser.flash_version}}</td>
-						<td>{{=browser.adobe_version}}</td>
-						<td><input type="radio" name="browser" value="{{=browser.id}}" /></td>
+						<td style="border-right: 0;">Browser</td>
+						<td style="border-left: 0;border-right: 0;"></td>
+						<td style="border-left: 0;"></td>
+						<td>Java</td>
+						<td>Flash</td>
+						<td>Adobe</td>
+						<td>&nbsp;</td>
 					</tr>
-				{{pass}}
+				</thead>
+				<tbody>
+					{{for i, browser in enumerate(browsers):}}
+						{{browserInfo = util.identifyBrowser(browser.useragent)}}
+						<tr>
+							<td style="border-right: 0;">{{=browser.useragent}}</td>
+							<td style="border-left: 0; border-right: 0; width: 1px;"><img src="{{=URL('static', 'images/icons/' + browserInfo['os'] + '.png')}}" /></td>
+							<td style="border-left: 0; width: 1px;"><img src="{{=URL('static', 'images/icons/' + browserInfo['browser'] + '.png')}}" /></td>
+							<td>{{=browser.java_version}}</td>
+							<td>{{=browser.flash_version}}</td>
+							<td>{{=browser.adobe_version}}</td>
+							<td><input type="radio" name="browser" value="{{=browser.id}}" /></td>
+						</tr>
+					{{pass}}
+				</tbody>
 			</table>
-			</div>
 			<select id="format" name="format">
 				<option value="auto">Autodetect format</option>
 				<option value="js">Javascript</option>
 				<option value="html">HTML</option>
 			</select>
 			{{=INPUT(_name="analysis_time", _placeholder="Analysis time (seconds)")}}
-		</div>
+		{{else:}}
+			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			<div class="alert alert-warn" role="alert">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				No browsers connected
+			</div>
+		{{pass}}
 	</span>
 	<input type="submit" id="form_submit" value="Analyse" />
 </form>
