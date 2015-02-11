@@ -4,11 +4,14 @@ from payload_builder import Payload
 import json
 import util
 
-VERSION = "v1.1"
+VERSION = "v1.2"
 AUTHOR = 'Russell Hole'
 CONTACT = 'russell.hole+honeybadger@gmail.com'
+PRODUCTION = False
 
 def index():
+	if PRODUCTION:
+		return redirect(URL('submit'))
 	return dict()
 
 def submit():

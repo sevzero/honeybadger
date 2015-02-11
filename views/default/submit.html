@@ -13,20 +13,18 @@
 						<td>Java</td>
 						<td>Flash</td>
 						<td>Adobe</td>
-						<td>&nbsp;</td>
 					</tr>
 				</thead>
 				<tbody>
 					{{for i, browser in enumerate(browsers):}}
 						{{browserInfo = util.identifyBrowser(browser.useragent)}}
-						<tr>
-							<td style="border-right: 0;">{{=browser.useragent}}</td>
+						<tr class="clickable">
+							<td style="border-right: 0;">{{=browser.useragent}} {{=i}}<input style="display:none;" type="radio" name="browser" value="{{=browser.id}}" {{if not i:}}checked{{pass}}/></td>
 							<td style="border-left: 0; border-right: 0; width: 1px;"><img src="{{=URL('static', 'images/icons/' + browserInfo['os'] + '.png')}}" /></td>
 							<td style="border-left: 0; width: 1px;"><img src="{{=URL('static', 'images/icons/' + browserInfo['browser'] + '.png')}}" /></td>
 							<td>{{=browser.java_version}}</td>
 							<td>{{=browser.flash_version}}</td>
 							<td>{{=browser.adobe_version}}</td>
-							<td><input type="radio" name="browser" value="{{=browser.id}}" /></td>
 						</tr>
 					{{pass}}
 				</tbody>

@@ -1,6 +1,6 @@
 {{extend 'layout.html'}}
-<div class="honeybadger_table">
-	<table>
+<table class="table table-bordered table-striped table-hover">
+	<thead>
 		<tr>
 			<td style="width:1px;">ID</td>
 			<td>Title</td>
@@ -8,6 +8,8 @@
 			<td style="width:1px;">MD5</td>
 			<td style="width:1px;"></td>
 		</tr>
+	</thead>
+	<tbody>
 		{{for row in results:}}
 			{{browser_info = util.identifyBrowser(row.browsers.useragent)}}
 			<tr onclick="window.location='{{=URL('result', args=[row.submissions.id])}}'">
@@ -21,8 +23,8 @@
 				<td><img src="{{=URL('static', 'images/'+row.submissions.state+'.gif')}}" /></td>
 			</tr>
 		{{pass}}
-	</table>
-</div>
+	</tbody>
+</table>
 <form action="{{=URL('submit')}}">
 	<input type="submit" value="Submit a new sample" />
 </form>

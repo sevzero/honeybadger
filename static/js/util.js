@@ -12,23 +12,10 @@ function switchClass(element, class1, class2, callback){
 }
 
 $(document).ready(function() {
-	$('.foldlink').click(function() {
-		$(this).parent().find('.foldme').toggle('slide');
+	$(".clickable").click(function() {
+		$(".clickable").removeClass("success");
+		$(this).addClass("success");
+		$(this).find("input:radio").prop('checked',true);
 	});
 });
 
-$(document).ready(function() {
-    inAnimation = 'fadeIn';
-    outAnimation = 'fadeOut';
-    $('.boringfoldlink').parent().find('.foldme').addClass('animated ' + inAnimation)
-	$('.boringfoldlink').click(function() {
-        switchClass($(this).parent().find('.foldme'), inAnimation, outAnimation, function(){});
-	});
-});
-
-$(document).ready(function() {
-	$('.showlink').click(function() {
-		$(this).parent().find('.foldme').show('slide');
-		$(this).hide('slide');
-	});
-});
