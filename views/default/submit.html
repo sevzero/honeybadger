@@ -6,7 +6,7 @@
 		<h3 class="showlink">Advanced options</h3>
 		<div class="foldme" style="display: none;">
 			<div class="honeybadger_table">
-			<table>
+			<table class="table table-bordered">
 				<tr>
 					<td style="border-right: 0;">Browser</td>
 					<td style="border-left: 0;border-right: 0;"></td>
@@ -15,15 +15,6 @@
 					<td>Flash</td>
 					<td>Adobe</td>
 					<td>&nbsp;</td>
-				</tr>
-				<tr>
-					<td style="border-right: 0;">I'm feeling lucky</td>
-					<td style="border-left: 0; border-right: 0;"><img src="{{=URL('static', 'images/icons/Unknown.png')}}" /></td>
-					<td style="border-left: 0;"><img src="{{=URL('static', 'images/icons/Unknown.png')}}" /></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td><input type="radio" name="browser" value="0" checked="true"/></td>
 				</tr>
 				{{for i, browser in enumerate(browsers):}}
 					{{browserInfo = util.identifyBrowser(browser.useragent)}}
