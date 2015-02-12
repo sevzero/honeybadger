@@ -1,8 +1,10 @@
 import datetime
+import time
 import hashlib
 from payload_builder import Payload
 import json
 import util
+from threading import Thread
 
 VERSION = "v1.2"
 AUTHOR = 'Russell Hole'
@@ -68,13 +70,14 @@ def poll():
 							adobe_version=request.vars.adobe_version,
 							)
 	db(db.browsers.id==browser_id).update(last_seen=datetime.datetime.now())
-	job = db((db.submissions.state=='queued') & ((db.submissions.browser_id==browser_id) | (db.submissions.browser_id==None))).select(db.submissions.id, db.submissions.browser_id).first()
-	if not job:
-		return dict()
-	db(db.submissions.id==job['id']).update(started=datetime.datetime.now(), state='processing', browser_id=browser_id)
-	redirect(URL('analyse', args=[job['id']]))
+	return dict()
 
 def analyse():
+	
+	def timeout(submission):
+		time.sleep(5)
+		db(db.submissions.id==result.id).update(completed=datetime.datetime.now(), state='completed')
+	
 	if not request.args:
 		redirect(URL('poll'))
 	response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
@@ -82,11 +85,12 @@ def analyse():
 	result = db(db.submissions.id==request.args[0]).select(db.submissions.ALL).first()
 	honeybadger_js = open('/'.join((request.folder, 'static', 'js', 'honeybadger.js'))).read()
 	payload = Payload(result['id'], result['code'], result['analysis_time'], result['format'], honeybadger_js)
+	#Thread(target=timeout, args=(result,)).start()
 	return payload.code
 
 def done():
 	db(db.submissions.id==request.args[0]).update(completed=datetime.datetime.now(), state='completed')
-	redirect(URL('poll'))
+	return "ok"
 
 def report():
 	if not request.vars.submission_id:
@@ -121,7 +125,7 @@ def checkforjobs():
 	db(db.browsers.id==browser_id).update(last_seen=datetime.datetime.now())
 	job = db((db.submissions.state=='queued') & ((db.submissions.browser_id==browser_id) | (db.submissions.browser_id==None))).select(db.submissions.id, db.submissions.browser_id).first()
 	if not job:
-		return "muffin"
+		return "cake"
 	db(db.submissions.id==job['id']).update(started=datetime.datetime.now(), state='processing', browser_id=browser_id)
 	return job['id']
 

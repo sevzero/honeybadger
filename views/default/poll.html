@@ -20,12 +20,12 @@
 	window.setInterval(function(){
 		post = $.post("{{=URL('checkforjobs')}}", browserinfo);
 		post.done(function(data){
-			console.log(data);
 			if (data != 'cake'){
-				w = window.open("{{=URL('analyse')}}/"+data)
+				w = window.open("{{=URL('analyse')}}/"+data);
 				window.setTimeout(function(w){
 					w.close();
-				}, 4000, w);
+					$.post("{{=URL('done')}}/"+data);
+				}, 10000, w);
 			}
 		});
 	}, 2000);
