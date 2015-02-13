@@ -12,6 +12,7 @@ CONTACT = 'russell.hole+honeybadger@gmail.com'
 WEBSITE = 'https://github.com/sevzero/honeybadger'
 
 PRODUCTION = False
+PROCESS_TIME = 10
 
 def index():
 	if PRODUCTION:
@@ -54,7 +55,7 @@ def history():
 
 def poll():
 	if not request.vars:
-		return dict()
+		return dict(process_time=PROCESS_TIME)
 	browser_hash = hashlib.md5(':'.join((request.vars.useragent,
 							  request.vars.flash_version,
 							  request.vars.java_version,
@@ -70,7 +71,7 @@ def poll():
 							adobe_version=request.vars.adobe_version,
 							)
 	db(db.browsers.id==browser_id).update(last_seen=datetime.datetime.now())
-	return dict()
+	return dict(process_time=PROCESS_TIME)
 
 def analyse():
 	
@@ -132,6 +133,7 @@ def checkforjobs():
 def result():
 	if not request.args:
 		return redirect(URL('submit'))
+	submission = db(db.submissions.id==request.args[0]).select(db.submissions.ALL,db.browsers.ALL).first()
 	evals = [i['code'] for i in db(db.evals.submission_id==request.args[0]).select(db.evals.ALL)]
 	writes = [i['code'] for i in db(db.writes.submission_id==request.args[0]).select(db.writes.ALL)]
 	result = db(db.dom_changes.submission_id==request.args[0]).select(db.dom_changes.ALL)
@@ -146,7 +148,7 @@ def result():
 	if 'SCRIPT' in dom_changes:
 		scripts = dom_changes['SCRIPT']
 		del(dom_changes['SCRIPT'])
-	return dict(evals=evals, writes=writes, dom_changes=dom_changes, scripts=scripts, errors=errors)
+	return dict(submission=submission, evals=evals, writes=writes, dom_changes=dom_changes, scripts=scripts, errors=errors)
 
 def about():
 	return dict(version=VERSION, author=AUTHOR, contact=CONTACT, website=WEBSITE)

@@ -1,12 +1,16 @@
 {{extend 'layout.html'}}
-<form method="post" style="display: inline;" onsubmit="return checkFields()">
-	{{=INPUT(_name='title', _placeholder="Title", _style="width:100%;")}}
-	{{=TEXTAREA(_name='sample', _placeholder="Sample goes here :)", _style="width:100%; height:400px;", requires=IS_NOT_EMPTY())}}
+<form role="form" method="post" onsubmit="return checkFields()">
+	<div class="form-group">
+		{{=INPUT(_name='title', _placeholder="Title", _class="form-control")}}
+	</div>
+	<div class-"form-group">
+		{{=TEXTAREA(_name='sample', _placeholder="Sample goes here :)", _style="height:400px;", _class="form-control", requires=IS_NOT_EMPTY())}}
+	</div>
 	<span>
 		{{if browsers:}}
 			<table class="table table-bordered table-hover table-striped">
 				<thead>
-					<tr>
+				<tr>
 						<td style="border-right: 0;">Browser</td>
 						<td style="border-left: 0;border-right: 0;"></td>
 						<td style="border-left: 0;"></td>
@@ -29,22 +33,15 @@
 					{{pass}}
 				</tbody>
 			</table>
-			<select id="format" name="format">
+			<select style="display: none;" id="format" name="format">
 				<option value="auto">Autodetect format</option>
-				<option value="js">Javascript</option>
-				<option value="html">HTML</option>
 			</select>
-			{{=INPUT(_name="analysis_time", _placeholder="Analysis time (seconds)")}}
+			{{=INPUT(_name="analysis_time", _placeholder="Analysis time (seconds)", _style="display: none;")}}
+			<input type="submit" id="form_submit" value="Analyse" class="btn-primary btn-block"/>
 		{{else:}}
-			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 			<div class="alert alert-warn" role="alert">
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 				No browsers connected
 			</div>
 		{{pass}}
-	</span>
-	<input type="submit" id="form_submit" value="Analyse" />
-</form>
-<form style="display: inline;" action="{{=URL('history')}}">
-	<input type="submit" value="History" />
 </form>

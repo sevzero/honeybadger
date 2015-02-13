@@ -25,7 +25,7 @@
 				window.setTimeout(function(w){
 					w.close();
 					$.post("{{=URL('done')}}/"+data);
-				}, 10000, w);
+				}, {{=process_time}}, w);
 			}
 		});
 	}, 2000);
