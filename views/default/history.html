@@ -2,7 +2,7 @@
 <table class="table table-bordered table-striped table-hover">
 	<thead>
 		<tr>
-			<td style="width:1px;">ID</td>
+			<td style="width:1px;">Submission&nbsp;Time</td>
 			<td>Title</td>
 			<td style="width:1px;">Browser</td>
 			<td style="width:1px;">MD5</td>
@@ -13,14 +13,20 @@
 		{{for row in results:}}
 			{{browser_info = util.identifyBrowser(row.browsers.useragent)}}
 			<tr onclick="window.location='{{=URL('result', args=[row.submissions.id])}}'">
-				<td>{{=row.submissions.id}}</td>
+				<td>{{=XML(str(row.submissions.submitted).replace(' ','&nbsp;'))}}</td>
 				<td>{{=row.submissions.title or 'No Title'}}</td>
 					<td>
 						<img src="{{=URL('static', 'images/icons/' + browser_info['os'] + '.png')}}"  alt="{{=browser_info['os']}}"/>
 						<img src="{{=URL('static', 'images/icons/' + browser_info['browser'] + '.png')}}" alt="{{=browser_info['browser']}}" />
 					</td>
 				<td>{{=row.submissions.md5}}</td>
-				<td><img src="{{=URL('static', 'images/'+row.submissions.state+'.gif')}}" /></td>
+				{{status_icon = 'ok'}}
+				{{status_color = 'success'}}
+				{{if row.submissions.state == 'processing':}}
+					{{status_icon = 'cog'}}
+					{{status_color='warning'}}
+				{{pass}}
+				<td><span class="glyphicon glyphicon-{{=status_icon}} text-{{=status_color}}" aria-hidden="true"></span></td>
 			</tr>
 		{{pass}}
 	</tbody>
