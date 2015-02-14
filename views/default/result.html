@@ -1,97 +1,103 @@
 {{extend 'layout.html'}}
-<div style="margin-top: -20px; margin-bottom: 20px;">
-	<form style="display: inline;" action="{{=URL('history')}}">
-		<input type="submit" value="Back to history" />
-	</form>
-	<form style="display: inline;" action="{{=URL('submit')}}">
-		<input type="submit" value="Submit another sample" />
-	</form>
-</div>
-<div class="panel panel-default">
-	<div class="panel-heading">Analysis engine</div>
-	<div class="panel-body">
-		<table class="table">
-			<tr>
-				<td>Browser</td>
-				<td>{{=submission.browsers.useragent}}</td>
-			</tr>
-			<tr>
-				<td>Flash version</td>
-				<td>{{=submission.browsers.flash_version}}</td>
-			</tr>
-			<tr>
-				<td>Java version</td>
-				<td>{{=submission.browsers.java_version}}</td>
-			</tr>
-			<tr>
-				<td>Adobe reader version</td>
-				<td>{{=submission.browsers.adobe_version}}</td>
-			</tr>
-		</table>
-		<!--<div class="input-group">
-			<span class="input-group-addon" id="basic-addon1">Browser</span>
-			<input type="text" class="form-control" value="{{=submission.browsers.useragent}}"/>
+<ul class="nav nav-pills">
+	<li role="presentation"><a href="{{=URL('history')}}">Back to history</a></li>
+	<li role="presentation"><a href="{{=URL('submit')}}">Submit another sample</a></li>
+</ul>
+<br />
+
+<div class="accordion" id="accordion2">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+				Analysis Summary
+			</a>
 		</div>
-		<div class="input-group">
-			<span class="input-group-addon" id="basic-addon2">Flash Version</span>
-			<input type="text" class="form-control" value="{{=submission.browsers.flash_version}}"/>
+		<div id="collapseOne" class="accordion-body collapse in">
+			<div class="panel-body">
+				<table class="table">
+					{{print submission.submissions}}
+					<tr>
+						<td>Title</td>
+						<td>{{=submission.submissions.title or '(None)'}}
+					</tr>
+					<tr>
+						<td>MD5</td>
+						<td>{{=submission.submissions.md5}} ({{=len(submission.submissions.code)}} bytes)
+					</tr>
+					<tr>
+						<td>Submitted</td>
+						<td>{{=submission.submissions.submitted}}
+					</tr>
+					<tr>
+						<td>Started</td>
+						<td>{{=submission.submissions.started}}
+					</tr>
+					<tr>
+						<td>Completed</td>
+						<td>{{=submission.submissions.completed}}
+					</tr>
+				</table>
+			</div>
 		</div>
-		<div class="input-group">
-			<span class="input-group-addon" id="basic-addon3">Java Version</span>
-			<input type="text" class="form-control" value="{{=submission.browsers.java_version}}"/>
-		</div>-->
-	</div>
-</div>
-<hr />
-{{if scripts:}}
-<div>
-	<h2>scripts ({{=len(scripts)}})</h2>
-	{{for script in scripts:}}
-	<div>
-		<pre>{{=script}}</pre>
-	</div>
-	{{pass}}
-</div>
-{{pass}}
-{{if errors:}}
-<div>
-	<h2>errors ({{=len(errors)}})</h2>
-	{{for error in errors:}}
-	<div>
-		<pre>{{=error}}</pre>
-	</div>
-	{{pass}}
-</div>
-{{pass}}
-{{if evals:}}
-<div>
-	<h2>evals ({{=len(evals)}})</h2>
-	{{for eval in evals:}}
-	<div>
-		<pre>{{=eval}}</pre>
-	</div>
-	{{pass}}
-</div>
-{{pass}}
-{{if writes:}}
-<div>
-	<h2>writes ({{=len(writes)}})</h2>
-	{{for write in writes:}}
-		<div>
-			<pre>{{=write}}</pre>
+		<div class="panel-heading">
+			<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+				Analysis Engine
+			</a>
 		</div>
-	{{pass}}
+		<div id="collapseTwo" class="accordion-body collapse">
+			<div class="panel-body">
+				<table class="table">
+					<tr>
+						<td>Browser</td>
+						<td>{{=submission.browsers.useragent}}</td>
+					</tr>
+					<tr>
+						<td>Flash version</td>
+						<td>{{=submission.browsers.flash_version or 'Not installed'}}</td>
+					</tr>
+					<tr>
+						<td>Java version</td>
+						<td>{{=submission.browsers.java_version or 'Not installed'}}</td>
+					</tr>
+					<tr>
+						<td>Adobe reader version</td>
+						<td>{{=submission.browsers.adobe_version or 'Not installed'}}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="panel-heading">
+			<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+				Sample
+			</a>
+		</div>
+		<div id="collapseThree" class="accordion-body collapse">
+			<div class="panel-body">
+				<pre>
+{{=submission.submissions.code}}
+				</pre>
+			</div>
+		</div>
+	</div>
 </div>
-{{pass}}
-{{if dom_changes:}}
-	{{for tag in sorted(dom_changes.keys()):}}
-		<div>
-			<h2>{{=tag.lower()+'s'}} ({{=len(dom_changes[tag])}})</h2>
-			<div>
-				{{for code in dom_changes[tag]:}}
-					<pre>{{=code}}</pre>
-				{{pass}}
+
+<div class="accordion" id="accordion3}}">
+	{{for r in result:}}
+		{{if not r[1]: continue}}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapse{{=r[0]}}">
+					{{=r[0]}} ({{=len(r[1])}})
+				</a>
+			</div>
+			<div id="collapse{{=r[0]}}" class="accordion-body collapse">
+				<div class="panel-body">
+					{{for s in r[1]:}}
+						<pre>{{=s}}</pre>
+					{{pass}}
+				</div>
 			</div>
 		</div>
 	{{pass}}
-{{pass}}
+</div>
+

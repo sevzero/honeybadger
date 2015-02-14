@@ -11,10 +11,9 @@
 		return confirm('WARNING: By proceeding your browser may be subjected to potentially malicious code. It is strongly recommended that you use a virtual machine with no connection to the internet to perform analysis. The Honeybadger team accepts no responsibility for damage caused by code being analysed. Please confirm that you understand the risks and want to continue.');
 	}
 </script>
+<br />
+<div class="btn-group" style="width: 100%;" role="group">
+	<a href="{{=URL('submit')}}" style="width: 50%;" class="btn btn-success">I'm submitting a sample, take me to the submissions page!</a>
+	<a href="{{=URL('poll')}}" style="width: 50%;" class="btn btn-warning" onclick="return checksubmit()">I'm analysing code, take me to the analysis page!</a>
+</div>
 
-<table style="table-layout: fixed; width: 100%">
-	<tr>
-		<td><form action="{{=URL('submit')}}"><input type="submit" class="nodisable" value="I'm submitting a sample, take me to the submissions page!" style="width: 100%; height: 30em;" /></form></td>
-		<td><form action="{{=URL('poll')}}" onsubmit="return checksubmit()"><input type="submit" class="nodisable" value="I'm analysing code, take me to the analysis page!" style="width: 100%; height: 30em;" /></form></td>
-	</tr>
-</table>

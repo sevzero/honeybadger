@@ -139,16 +139,22 @@ def result():
 	result = db(db.dom_changes.submission_id==request.args[0]).select(db.dom_changes.ALL)
 	errors = [i['error'] for i in db(db.errors.submission_id==request.args[0]).select(db.errors.ALL)]
 	dom_changes = {}
+	scripts=objects=iframes = []
 	for row in result:
 		tag = row['type']
 		if not tag in dom_changes:
 			dom_changes[tag] = []
 		dom_changes[tag].append(row['html'])
-	scripts = []
 	if 'SCRIPT' in dom_changes:
 		scripts = dom_changes['SCRIPT']
 		del(dom_changes['SCRIPT'])
-	return dict(submission=submission, evals=evals, writes=writes, dom_changes=dom_changes, scripts=scripts, errors=errors)
+	if 'IFRAME' in dom_changes:
+		iframes = dom_changes['IFRAME']
+		del(dom_changes['IFRAME'])
+	if 'OBJECT' in dom_changes:
+		objects = dom_changes['OBJECT']
+		del(dom_changes['OBJECT'])
+	return dict(submission=submission, result=(('scripts',scripts),('evals',evals),('writes',writes),('iframes',iframes),('objects',objects),('errors',errors)))
 
 def about():
 	return dict(version=VERSION, author=AUTHOR, contact=CONTACT, website=WEBSITE)
