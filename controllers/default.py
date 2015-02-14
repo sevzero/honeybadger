@@ -141,6 +141,7 @@ def result():
 	dom_changes = {}
 	scripts=objects=iframes = []
 	for row in result:
+		print row
 		tag = row['type']
 		if not tag in dom_changes:
 			dom_changes[tag] = []
@@ -154,6 +155,9 @@ def result():
 	if 'OBJECT' in dom_changes:
 		objects = dom_changes['OBJECT']
 		del(dom_changes['OBJECT'])
+	if 'APPLET' in dom_changes:
+		objects = dom_changes['APPLET']
+		del(dom_changes['APPLET'])
 	return dict(submission=submission, result=(('scripts',scripts),('evals',evals),('writes',writes),('iframes',iframes),('objects',objects),('errors',errors)))
 
 def about():
