@@ -57,7 +57,7 @@ eval = function(code){
 	}
 }
 
-document.write = function(code){
+document.writeln = document.write = function(code){
 	honeybadger_log("write", code);
 	honeybadger_write(code);
 }
