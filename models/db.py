@@ -45,10 +45,5 @@ db.define_table('scripts',
 
 db.define_table('errors',
 	Field('submission_id', 'reference submissions'),
-	Field('error')
+	Field('code')
 )
-
-#db.define_table('browsers',
-#	Field('hash_id', 'reference hashes'),
-#	Field('last_seen', 'datetime'),
-#)

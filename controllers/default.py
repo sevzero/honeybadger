@@ -105,7 +105,7 @@ def report():
 		tag, html = [request.vars.msg.split(':')[0], ':'.join(request.vars.msg.split(':')[1:])]
 		db.dom_changes.insert(submission_id=submission_id, type=tag, html=html)
 	if request.vars.type == 'error':
-		db.errors.insert(submission_id=submission_id, error=request.vars.msg)
+		db.errors.insert(submission_id=submission_id, code=request.vars.msg)
 	return None
 
 def checkforjobs():
@@ -134,31 +134,18 @@ def result():
 	if not request.args:
 		return redirect(URL('submit'))
 	submission = db(db.submissions.id==request.args[0]).select(db.submissions.ALL,db.browsers.ALL).first()
-	evals = [i['code'] for i in db(db.evals.submission_id==request.args[0]).select(db.evals.ALL)]
-	writes = [i['code'] for i in db(db.writes.submission_id==request.args[0]).select(db.writes.ALL)]
-	result = db(db.dom_changes.submission_id==request.args[0]).select(db.dom_changes.ALL)
-	errors = [i['error'] for i in db(db.errors.submission_id==request.args[0]).select(db.errors.ALL)]
-	dom_changes = {}
-	scripts=objects=iframes = []
-	for row in result:
-		print row
-		tag = row['type']
-		if not tag in dom_changes:
-			dom_changes[tag] = []
-		dom_changes[tag].append(row['html'])
-	if 'SCRIPT' in dom_changes:
-		scripts = dom_changes['SCRIPT']
-		del(dom_changes['SCRIPT'])
-	if 'IFRAME' in dom_changes:
-		iframes = dom_changes['IFRAME']
-		del(dom_changes['IFRAME'])
-	if 'OBJECT' in dom_changes:
-		objects = dom_changes['OBJECT']
-		del(dom_changes['OBJECT'])
-	if 'APPLET' in dom_changes:
-		objects = dom_changes['APPLET']
-		del(dom_changes['APPLET'])
-	return dict(submission=submission, result=(('scripts',scripts),('evals',evals),('writes',writes),('iframes',iframes),('objects',objects),('errors',errors)))
+	dom_changes = submission.submissions.dom_changes.select()
+	changes = {}
+	for change in dom_changes:
+		if not change.type in changes:
+			changes[change.type] = []
+		changes[change.type].append(change.html)
+	general = {
+				'Writes' : submission.submissions.writes.select(),
+				'evals' : submission.submissions.evals.select(),
+				'Errors' : submission.submissions.errors.select(),
+	}
+	return dict(submission=submission, general=general, dom_changes=changes)
 
 def about():
 	return dict(version=VERSION, author=AUTHOR, contact=CONTACT, website=WEBSITE)

@@ -81,21 +81,37 @@
 </div>
 
 <div class="accordion" id="accordion3}}">
-	{{for r in result:}}
-		{{if not r[1]: continue}}
+	{{for r in general:}}
+		{{if not general[r]: continue}}
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapse{{=r[0]}}">
-					{{=r[0]}} ({{=len(r[1])}})
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapse{{=r.replace(' ','')}}">
+					{{=r}} ({{=len(general[r])}})
 				</a>
 			</div>
-			<div id="collapse{{=r[0]}}" class="accordion-body collapse">
+			<div id="collapse{{=r.replace(' ','')}}" class="accordion-body collapse">
 				<div class="panel-body">
-					{{for s in r[1]:}}
-						<pre>{{=s}}</pre>
+					{{for s in general[r]:}}
+						<pre>{{=s.code}}</pre>
 					{{pass}}
 				</div>
 			</div>
+		</div>
+	{{pass}}
+	{{for change_type in dom_changes:}}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapse{{=change_type}}">
+					{{=change_type[0].upper() + change_type[1:].lower() + 's'}} ({{=len(dom_changes[change_type])}})
+				</a>
+			</div>
+			{{for change in dom_changes[change_type]:}}
+				<div id="collapse{{=change_type}}" class="accordion-body collapse">
+					<div class="panel-body">
+						<pre>{{=change}}</pre>
+					</div>
+				</div>
+			{{pass}}
 		</div>
 	{{pass}}
 </div>
