@@ -9,7 +9,7 @@ from threading import Thread
 VERSION = "v1.3"
 AUTHOR = 'Russell Hole'
 CONTACT = 'russell.hole+honeybadger@gmail.com'
-WEBSITE = 'https://github.com/sevzero/honeybadger'
+WEBSITE = 'https://sevzero.github.io/honeybadger'
 
 PRODUCTION = False
 PROCESS_TIME = 10
