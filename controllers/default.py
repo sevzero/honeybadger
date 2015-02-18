@@ -6,7 +6,7 @@ import json
 import util
 from threading import Thread
 
-VERSION = "v1.3"
+VERSION = "v1.4"
 AUTHOR = 'Russell Hole'
 CONTACT = 'russell.hole+honeybadger@gmail.com'
 WEBSITE = 'https://sevzero.github.io/honeybadger'
