@@ -97,15 +97,16 @@ def report():
 	if not request.vars.submission_id:
 		return None
 	submission_id = request.vars.submission_id
+	msg = request.vars.msg.decode('base64')
 	if request.vars.type == 'eval':
-		db.evals.insert(submission_id=submission_id, code=request.vars.msg)
+		db.evals.insert(submission_id=submission_id, code=msg)
 	if request.vars.type == 'write':
-		db.writes.insert(submission_id=submission_id, code=request.vars.msg)
+		db.writes.insert(submission_id=submission_id, code=msg)
 	if request.vars.type == 'dom':
-		tag, html = [request.vars.msg.split(':')[0], ':'.join(request.vars.msg.split(':')[1:])]
+		tag, html = [msg.split(':')[0], ':'.join(msg.split(':')[1:])]
 		db.dom_changes.insert(submission_id=submission_id, type=tag, html=html)
 	if request.vars.type == 'error':
-		db.errors.insert(submission_id=submission_id, code=request.vars.msg)
+		db.errors.insert(submission_id=submission_id, code=msg)
 	return None
 
 def checkforjobs():
