@@ -47,3 +47,9 @@ db.define_table('errors',
 	Field('submission_id', 'reference submissions'),
 	Field('code')
 )
+
+db.define_table('vars',
+	Field('submission_id', 'reference submissions'),
+	Field('name'),
+	Field('value'),
+)

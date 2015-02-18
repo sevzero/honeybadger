@@ -232,7 +232,7 @@ window.setTimeout(function(){
 	result = compareThings(honeybadger_things, snapshot());
 	for (i in result){
 		if (result[i][1] == 'string'){
-			honeybadger_log(result[i]);
+			honeybadger_log('var', result[i][0] + ':' + Base64.encode(result[i][2]));
 		}
 	}
 }, 8000);

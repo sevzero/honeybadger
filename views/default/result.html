@@ -114,5 +114,31 @@
 			{{pass}}
 		</div>
 	{{pass}}
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapsevars">
+				Defined strings ({{=len(variables)}})
+			</a>
+		</div>
+		<div id="collapsevars" class="accordion-body collapse">
+			<div class="panel-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{for var in variables:}}
+							<tr>
+								<td style="width: 200px;">{{=var[0]}}</td>
+								<td>{{=var[1]}}</td>
+							</tr>
+						{{pass}}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
-

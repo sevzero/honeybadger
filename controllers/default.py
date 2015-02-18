@@ -107,6 +107,10 @@ def report():
 		db.dom_changes.insert(submission_id=submission_id, type=tag, html=html)
 	if request.vars.type == 'error':
 		db.errors.insert(submission_id=submission_id, code=msg)
+	if request.vars.type == 'var':
+		name,value = msg.split(':')
+		value = value.decode('base64')
+		db.vars.insert(submission_id=submission_id, name=name, value=value)
 	return None
 
 def checkforjobs():
@@ -146,7 +150,10 @@ def result():
 				'evals' : submission.submissions.evals.select(),
 				'Errors' : submission.submissions.errors.select(),
 	}
-	return dict(submission=submission, general=general, dom_changes=changes)
+	vars = []
+	for var in submission.submissions.vars.select():
+		vars.append((var.name,var.value))
+	return dict(submission=submission, general=general, dom_changes=changes,variables=vars)
 
 def about():
 	return dict(version=VERSION, author=AUTHOR, contact=CONTACT, website=WEBSITE)
