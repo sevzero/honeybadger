@@ -97,7 +97,7 @@ def report():
 	if not request.vars.submission_id:
 		return None
 	submission_id = request.vars.submission_id
-	msg = request.vars.msg.decode('base64')
+	msg = request.vars.msg.replace(' ','+').decode('base64')
 	if request.vars.type == 'eval':
 		db.evals.insert(submission_id=submission_id, code=msg)
 	if request.vars.type == 'write':
@@ -109,7 +109,7 @@ def report():
 		db.errors.insert(submission_id=submission_id, code=msg)
 	if request.vars.type == 'var':
 		name,value = msg.split(':')
-		value = value.decode('base64')
+		value = value.replace(' ','+').decode('base64')
 		db.vars.insert(submission_id=submission_id, name=name, value=value)
 	return None
 
