@@ -86,7 +86,6 @@ def analyse():
 	result = db(db.submissions.id==request.args[0]).select(db.submissions.ALL).first()
 	honeybadger_js = open('/'.join((request.folder, 'static', 'js', 'honeybadger.js'))).read()
 	payload = Payload(result['id'], result['code'], PROCESS_TIME, result['format'], honeybadger_js)
-	#Thread(target=timeout, args=(result,)).start()
 	return payload.code
 
 def done():
