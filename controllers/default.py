@@ -50,7 +50,7 @@ def wait():
 	return dict(submission_id=submission_id)
 
 def history():
-	results = db(db.submissions.browser_id==db.browsers.id).select(db.submissions.ALL, db.browsers.ALL)
+	results = db(db.submissions.browser_id==db.browsers.id).select(db.submissions.ALL, db.browsers.ALL, orderby=~db.submissions.submitted, limitby=(0, 25))
 	return dict(results=results, util=util)
 
 def poll():
