@@ -1,4 +1,5 @@
 {{extend 'layout.html'}}
+<a href="{{=URL('submit')}}" class="btn btn-primary">Submit a new sample</a>
 <table class="table table-bordered table-striped table-hover">
 	<thead>
 		<tr>
@@ -31,6 +32,3 @@
 		{{pass}}
 	</tbody>
 </table>
-<form action="{{=URL('submit')}}">
-	<input type="submit" value="Submit a new sample" class="btn-primary"/>
-</form>
