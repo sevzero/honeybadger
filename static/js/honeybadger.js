@@ -115,9 +115,10 @@ eval = function(code){
 // Override writes
 document.writeln = document.write = function(code){
 	honeybadger_log("write", code);
-	honeybadger_write(code);
+	return Function.prototype.apply.call(
+		honeybadger_write, document, arguments
+	);
 }
-
 
 // Snapshot environment variables
 function snapshot(){
