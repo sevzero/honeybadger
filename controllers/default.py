@@ -97,6 +97,8 @@ def report():
 		return None
 	submission_id = request.vars.submission_id
 	msg = request.vars.msg.replace(' ','+').decode('base64')
+	if request.vars.type == 'alert':
+		db.alerts.insert(submission_id=submission_id, alert=msg)
 	if request.vars.type == 'eval':
 		db.evals.insert(submission_id=submission_id, code=msg)
 	if request.vars.type == 'write':
@@ -139,6 +141,7 @@ def result():
 		return redirect(URL('submit'))
 	submission = db(db.submissions.id==request.args[0]).select(db.submissions.ALL,db.browsers.ALL).first()
 	dom_changes = submission.submissions.dom_changes.select()
+	alerts = set([i.alert for i in submission.submissions.alerts.select()])
 	changes = {}
 	for change in dom_changes:
 		if not change.type in changes:
@@ -152,7 +155,7 @@ def result():
 	vars = []
 	for var in submission.submissions.vars.select():
 		vars.append((var.name,var.value))
-	return dict(submission=submission, general=general, dom_changes=changes,variables=vars)
+	return dict(submission=submission, alerts=alerts, general=general, dom_changes=changes, variables=vars)
 
 def about():
 	return dict(version=VERSION, author=AUTHOR, contact=CONTACT, website=WEBSITE)

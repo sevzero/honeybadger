@@ -43,7 +43,6 @@ function honeybadger_base64_encode(data) {
 	return (r ? enc.slice(0, r - 3) : enc) + '==='.slice(r || 3);
 }
 
-
 // We'll use these later
 honeybadger_eval = eval
 honeybadger_write = document.write
@@ -72,6 +71,13 @@ window.onerror = function(message, url, lineNumber) {
 	honeybadger_log('error', lineNumber + ": " + message);
 	return true;
 };
+
+// Catch useragent checks
+honeybadger_ua = window.navigator.userAgent
+navigator.__defineGetter__('userAgent', function(){
+	honeybadger_log('alert', 'Script checks the browser useragent')
+    return honeybadger_ua
+});
 
 // Catch DOM manipulations
 if (window.MutationObserver){

@@ -22,6 +22,11 @@ db.define_table('submissions',
 	Field('browser_id', 'reference browsers'),
 )
 
+db.define_table('alerts',
+	Field('submission_id', 'reference submissions'),
+	Field('alert'),
+)
+
 db.define_table('dom_changes',
 	Field('submission_id', 'reference submissions'),
 	Field('type'),

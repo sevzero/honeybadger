@@ -80,6 +80,13 @@
 	</div>
 </div>
 
+{{for alert in alerts: }}
+	<div class="alert alert-warning" role="alert">
+		<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		{{=alert}}
+	</div>
+{{pass}}
+
 <div class="accordion" id="accordion3}}">
 	{{for r in general:}}
 		{{if not general[r]: continue}}
