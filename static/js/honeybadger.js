@@ -104,12 +104,9 @@ if (window.MutationObserver){
 // Override evals
 eval = function(code){
 	honeybadger_log("eval", code);
-	try{
-		return honeybadger_eval(code);
-	}
-	catch(e){
-		return null;
-	}
+	return Function.prototype.apply.call(
+		honeybadger_eval, window, arguments
+	);
 }
 
 // Override writes
