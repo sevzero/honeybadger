@@ -34,6 +34,7 @@ def submit():
 											  state="queued",
 											  submitted=datetime.datetime.now(),
 											  md5=hashlib.md5(request.vars.sample).hexdigest(),
+											  ip=request.client,
 											  analysis_time=analysis_time,
 											  format=request.vars.format,
 											  browser_id=browser,
