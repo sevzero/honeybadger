@@ -13,7 +13,7 @@
 	<tbody>
 		{{for row in results:}}
 			{{browser_info = util.identifyBrowser(row.browsers.useragent)}}
-			<tr onclick="window.location='{{=URL('result', args=[row.submissions.id])}}'">
+			<tr onclick="window.location='{{=URL('result', args=[row.submissions.md5,row.submissions.id])}}'">
 				<td>{{=XML(str(row.submissions.submitted).replace(' ','&nbsp;'))}}</td>
 				<td>{{=row.submissions.title or 'No Title'}}</td>
 					<td>

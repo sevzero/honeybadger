@@ -75,7 +75,6 @@ def poll():
 	return dict(process_time=PROCESS_TIME)
 
 def analyse():
-	
 	def timeout(submission):
 		time.sleep(5)
 		db(db.submissions.id==result.id).update(completed=datetime.datetime.now(), state='completed')
@@ -138,9 +137,9 @@ def checkforjobs():
 	return job['id']
 
 def result():
-	if not request.args:
-		return redirect(URL('submit'))
-	submission = db(db.submissions.id==request.args[0]).select(db.submissions.ALL,db.browsers.ALL).first()
+	if not len(request.args) == 2:
+		return redirect(URL('history'))
+	submission = db(db.submissions.md5==request.args[0],db.submissions.id==request.args[1]).select(db.submissions.ALL,db.browsers.ALL).first()
 	dom_changes = submission.submissions.dom_changes.select()
 	alerts = set([i.alert for i in submission.submissions.alerts.select()])
 	changes = {}
