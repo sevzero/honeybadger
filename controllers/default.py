@@ -29,26 +29,27 @@ def submit():
 			return redirect(URL('submit'))
 		if not request.vars.format in ['auto', 'js', 'html']:
 			return redirect(URL('submit'))
+		md5 = hashlib.md5(request.vars.sample).hexdigest()
 		submission_id = db.submissions.insert(title=request.vars.title,
 											  code=request.vars.sample,
 											  state="queued",
 											  submitted=datetime.datetime.now(),
-											  md5=hashlib.md5(request.vars.sample).hexdigest(),
+											  md5=md5,
 											  ip=request.client,
 											  analysis_time=analysis_time,
 											  format=request.vars.format,
 											  browser_id=browser,
 											  )
-
-		return redirect(URL('wait', args=[submission_id]))
+		return redirect(URL('wait', args=[md5,submission_id]))
 	browsers = db(db.browsers.last_seen > datetime.datetime.now() - datetime.timedelta(minutes = 1)).select(db.browsers.ALL)
 	return dict(browsers=browsers, util=util)
 
 def wait():
 	if not request.args:
 		return redirect(URL('submit'))
-	submission_id = request.args[0]
-	return dict(submission_id=submission_id)
+	md5 = request.args[0]
+	submission_id = request.args[1]
+	return dict(submission_id=submission_id,md5=md5)
 
 def history():
 	results = db(db.submissions.browser_id==db.browsers.id).select(db.submissions.ALL, db.browsers.ALL, orderby=~db.submissions.submitted, limitby=(0, 25))
@@ -139,7 +140,7 @@ def checkforjobs():
 def result():
 	if not len(request.args) == 2:
 		return redirect(URL('history'))
-	submission = db(db.submissions.md5==request.args[0],db.submissions.id==request.args[1]).select(db.submissions.ALL,db.browsers.ALL).first()
+	submission = db(db.submissions.md5==request.args[0] and db.submissions.id==request.args[1]).select(db.submissions.ALL,db.browsers.ALL).first()
 	dom_changes = submission.submissions.dom_changes.select()
 	alerts = set([i.alert for i in submission.submissions.alerts.select()])
 	changes = {}
