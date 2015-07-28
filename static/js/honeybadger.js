@@ -109,7 +109,7 @@ Function = function (arg1, arg2){
 		honeybadger_log('anonymous_function', arg1);
 		return honeybadger_Function(arg1);
 	}
-	honeybadger_log('anonymous_function', arg1, + ', ' + arg2);
+	honeybadger_log('anonymous_function', arg1 + ', ' + arg2);
 	return honeybadger_Function(arg1, arg2);
 }
 
