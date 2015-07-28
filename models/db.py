@@ -34,6 +34,11 @@ db.define_table('dom_changes',
 	Field('html')
 )
 
+db.define_table('anonymous_functions',
+	Field('submission_id', 'reference submissions'),
+	Field('code')
+)
+
 db.define_table('evals',
 	Field('submission_id', 'reference submissions'),
 	Field('code')

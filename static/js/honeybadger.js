@@ -66,6 +66,7 @@ function honeybadger_log(type, msg){
 	return xmlhttp.responseText;
 }
 
+
 // Catch Errors
 window.onerror = function(message, url, lineNumber) {
 	honeybadger_log('error', lineNumber + ": " + message);
@@ -101,6 +102,19 @@ if (window.MutationObserver){
 	});
 
 }
+
+honeybadger_Function = Function
+Function = function (arg1, arg2){
+	if (arg2 == undefined){
+		honeybadger_log('anonymous_function', arg1);
+		return honeybadger_Function(arg1);
+	}
+	honeybadger_log('anonymous_function', arg1, + ', ' + arg2);
+	return honeybadger_Function(arg1, arg2);
+}
+
+Function.prototype = honeybadger_Function.prototype
+
 // Override evals
 eval = function(code){
 	honeybadger_log("eval", code);

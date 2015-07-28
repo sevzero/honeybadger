@@ -100,6 +100,8 @@ def report():
 	msg = request.vars.msg.replace(' ','+').decode('base64')
 	if request.vars.type == 'alert':
 		db.alerts.insert(submission_id=submission_id, alert=msg)
+	if request.vars.type == 'anonymous_function':
+		db.anonymous_functions.insert(submission_id=submission_id, code=msg)
 	if request.vars.type == 'eval':
 		db.evals.insert(submission_id=submission_id, code=msg)
 	if request.vars.type == 'write':
@@ -150,6 +152,7 @@ def result():
 		changes[change.type].append(change.html)
 	general = {
 				'Writes' : submission.submissions.writes.select(),
+                                'Anonymous functions': submission.submissions.anonymous_functions.select(),
 				'evals' : submission.submissions.evals.select(),
 				'Errors' : submission.submissions.errors.select(),
 	}
