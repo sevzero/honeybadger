@@ -14,6 +14,12 @@ identificationChecks = [
 			return $('#analysis').html().search(/var cryptKey = /) != -1;
 		}
 	},
+	{
+		msg: "NuclearEK",
+		check: function (){
+			return $('#analysis').html().search(/window.runer = true/) != -1;
+		}
+	},
 ];
 
 $( document ).ready(function() {
