@@ -11,7 +11,7 @@ identificationChecks = [
 	{
 		msg: "AnglerEK",
 		check: function (){
-			return $('#analysis').html().search(/var cryptkey = /) != -1;
+			return $('#analysis').html().search(/var cryptKey = /) != -1;
 		}
 	},
 ];
