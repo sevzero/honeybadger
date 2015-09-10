@@ -9,3 +9,5 @@ Setting up Honeybadger
     Run the web2py server in public mode
     Configure a virtual machine on a host-only adapter and navigate to http://<host ip>:8000/honeybadger and select analyse
     From the host OS navigate to http://localhost:8000/honeybadger and select submit
+
+A demo of honeybadger is hosted at http://honeybadger.mycorneroftheinter.net
