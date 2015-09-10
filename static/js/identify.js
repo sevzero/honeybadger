@@ -15,6 +15,18 @@ identificationChecks = [
 		}
 	},
 	{
+		msg: "KaiXin Exploit Kit",
+		check: function (){
+			return $('#analysis').html().search(/nbnburl/) != -1;
+		}
+	},
+	{
+		msg: "RIG Exploit Kit",
+		check: function (){
+			return $('#analysis').html().search(/window.ava = true;/) != -1;
+		}
+	},
+	{
 		msg: "NuclearEK",
 		check: function (){
 			return $('#analysis').html().search(/window.runer = true/) != -1;
