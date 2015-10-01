@@ -142,7 +142,8 @@ def checkforjobs():
 def result():
 	if not len(request.args) == 2:
 		return redirect(URL('history'))
-	submission = db(db.submissions.md5==request.args[0] and db.submissions.id==request.args[1]).select(db.submissions.ALL,db.browsers.ALL).first()
+	submission = db((db.submissions.md5==request.args[0]) & (db.submissions.id==request.args[1]) & (db.submissions.browser_id==db.browsers.id)).select(db.submissions.ALL,db.browsers.ALL).first()
+	print submission
 	dom_changes = submission.submissions.dom_changes.select()
 	alerts = set([i.alert for i in submission.submissions.alerts.select()])
 	changes = {}
