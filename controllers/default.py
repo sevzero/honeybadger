@@ -95,12 +95,18 @@ def done():
 	return "ok"
 
 def report():
+	row = db(db.submissions.id==request.vars.submission_id).select(db.submissions.state).first()
+	if row.state != 'processing':
+		return
 	if not request.vars.submission_id:
 		return None
 	submission_id = request.vars.submission_id
-	msg = request.vars.msg.replace(' ','+').decode('base64').split('^')
 	if request.vars.type == 'alert':
+		msg = request.vars.msg.replace(' ','+').decode('base64').split('^')
 		db.alerts.insert(submission_id=submission_id, type=msg[0], value=''.join(msg[1:]))
+	if request.vars.type == 'redirect':
+		db.alerts.insert(submission_id=submission_id, type='Redirects', value=request.vars.msg)
+		return 'Redirect Logged'
 	return None
 
 def checkforjobs():
