@@ -1,4 +1,5 @@
 import datetime
+import collections
 import time
 import hashlib
 from payload_builder import Payload
@@ -97,24 +98,9 @@ def report():
 	if not request.vars.submission_id:
 		return None
 	submission_id = request.vars.submission_id
-	msg = request.vars.msg.replace(' ','+').decode('base64')
+	msg = request.vars.msg.replace(' ','+').decode('base64').split('^')
 	if request.vars.type == 'alert':
-		db.alerts.insert(submission_id=submission_id, alert=msg)
-	if request.vars.type == 'anonymous_function':
-		db.anonymous_functions.insert(submission_id=submission_id, code=msg)
-	if request.vars.type == 'eval':
-		db.evals.insert(submission_id=submission_id, code=msg)
-	if request.vars.type == 'write':
-		db.writes.insert(submission_id=submission_id, code=msg)
-	if request.vars.type == 'dom':
-		tag, html = [msg.split(':')[0], ':'.join(msg.split(':')[1:])]
-		db.dom_changes.insert(submission_id=submission_id, type=tag, html=html)
-	if request.vars.type == 'error':
-		db.errors.insert(submission_id=submission_id, code=msg)
-	if request.vars.type == 'var':
-		name,value = msg.split(':')
-		value = value.replace(' ','+').decode('base64')
-		db.vars.insert(submission_id=submission_id, name=name, value=value)
+		db.alerts.insert(submission_id=submission_id, type=msg[0], value=''.join(msg[1:]))
 	return None
 
 def checkforjobs():
@@ -143,24 +129,22 @@ def result():
 	if not len(request.args) == 2:
 		return redirect(URL('history'))
 	submission = db((db.submissions.md5==request.args[0]) & (db.submissions.id==request.args[1]) & (db.submissions.browser_id==db.browsers.id)).select(db.submissions.ALL,db.browsers.ALL).first()
-	print submission
-	dom_changes = submission.submissions.dom_changes.select()
-	alerts = set([i.alert for i in submission.submissions.alerts.select()])
-	changes = {}
-	for change in dom_changes:
-		if not change.type in changes:
-			changes[change.type] = []
-		changes[change.type].append(change.html)
-	general = {
-				'Writes' : submission.submissions.writes.select(),
-                                'Anonymous functions': submission.submissions.anonymous_functions.select(),
-				'evals' : submission.submissions.evals.select(),
-				'Errors' : submission.submissions.errors.select(),
-	}
-	vars = []
-	for var in submission.submissions.vars.select():
-		vars.append((var.name,var.value))
-	return dict(submission=submission, alerts=alerts, general=general, dom_changes=changes, variables=vars)
+	messages = submission.submissions.alerts.select()
+	tempdict = {}
+	for m in messages:
+		if m.type not in tempdict:
+			tempdict[m.type] = []
+		tempdict[m.type].append(m.value)
+	messages = collections.OrderedDict(sorted(tempdict.items()))
+	alerts = []
+	variables = []
+	if 'Alerts' in messages:
+		alerts = messages['Alerts']
+		del(messages['Alerts'])
+	if 'Variables' in messages:
+		variables = messages['Variables']
+		del(messages['Variables'])
+	return dict(submission=submission, messages=messages, alerts=alerts, variables=variables)
 
 def about():
 	return dict(version=VERSION, author=AUTHOR, contact=CONTACT, website=WEBSITE)

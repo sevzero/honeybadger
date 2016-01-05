@@ -25,42 +25,6 @@ db.define_table('submissions',
 
 db.define_table('alerts',
 	Field('submission_id', 'reference submissions'),
-	Field('alert'),
-)
-
-db.define_table('dom_changes',
-	Field('submission_id', 'reference submissions'),
 	Field('type'),
-	Field('html')
-)
-
-db.define_table('anonymous_functions',
-	Field('submission_id', 'reference submissions'),
-	Field('code')
-)
-
-db.define_table('evals',
-	Field('submission_id', 'reference submissions'),
-	Field('code')
-)
-
-db.define_table('writes',
-	Field('submission_id', 'reference submissions'),
-	Field('code')
-)
-
-db.define_table('scripts',
-	Field('submission_id', 'reference submissions'),
-	Field('code')
-)
-
-db.define_table('errors',
-	Field('submission_id', 'reference submissions'),
-	Field('code')
-)
-
-db.define_table('vars',
-	Field('submission_id', 'reference submissions'),
-	Field('name'),
-	Field('value'),
+	Field('value')
 )

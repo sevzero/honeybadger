@@ -61,7 +61,7 @@ function honeybadger_log(type, msg){
 	else{// code for IE6, IE5
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	}
-	xmlhttp.open("POST", honeybadger_reporting_url+"?submission_id="+honeybadger_submission_id+"&type="+type+"&msg="+honeybadger_base64_encode(msg).replace('+', '%2B'), false)
+	xmlhttp.open("POST", honeybadger_reporting_url+"?submission_id="+honeybadger_submission_id+"&type=alert&msg="+honeybadger_base64_encode(type + '^' + msg).replace('+', '%2B'), false);
 	xmlhttp.send(null);
 	return xmlhttp.responseText;
 }
@@ -69,14 +69,14 @@ function honeybadger_log(type, msg){
 
 // Catch Errors
 window.onerror = function(message, url, lineNumber) {
-	honeybadger_log('error', lineNumber + ": " + message);
+	honeybadger_log('Errors', lineNumber + ": " + message);
 	return true;
 };
 
 // Catch useragent checks
 honeybadger_ua = window.navigator.userAgent
 navigator.__defineGetter__('userAgent', function(){
-	honeybadger_log('alert', 'Script checks the browser useragent')
+	honeybadger_log('Alerts', 'Script checks the browser useragent')
     return honeybadger_ua
 });
 
@@ -88,7 +88,7 @@ if (window.MutationObserver){
 			if (mutation.type == "childList"){
 				for (i = 0; i < mutation.addedNodes.length; i++){
 					if (honeybadger_collect_dom_objects.indexOf(mutation.addedNodes[i].nodeName) != -1){
-						honeybadger_log("dom",  mutation.addedNodes[i].nodeName + ':' + mutation.addedNodes[i].outerHTML);
+						honeybadger_log("DOM changes - " +  mutation.addedNodes[i].nodeName.toLowerCase(),  mutation.addedNodes[i].outerHTML);
 					}
 				}
 			}
@@ -106,10 +106,10 @@ if (window.MutationObserver){
 honeybadger_Function = Function
 Function = function (arg1, arg2){
 	if (arg2 == undefined){
-		honeybadger_log('anonymous_function', arg1);
+		honeybadger_log('Anonymous Functions', arg1);
 		return honeybadger_Function(arg1);
 	}
-	honeybadger_log('anonymous_function', arg1 + ', ' + arg2);
+	honeybadger_log('Anonymous Functions', arg1 + ', ' + arg2);
 	return honeybadger_Function(arg1, arg2);
 }
 
@@ -117,7 +117,7 @@ Function.prototype = honeybadger_Function.prototype
 
 // Override evals
 eval = function(code){
-	honeybadger_log("eval", code);
+	honeybadger_log("Eval", code);
 	return Function.prototype.apply.call(
 		honeybadger_eval, window, arguments
 	);
@@ -125,7 +125,7 @@ eval = function(code){
 
 // Override writes
 document.writeln = document.write = function(code){
-	honeybadger_log("write", code);
+	honeybadger_log("Document Writes", code);
 	return Function.prototype.apply.call(
 		honeybadger_write, document, arguments
 	);
@@ -160,7 +160,7 @@ window.setTimeout(function(){
 	result = compareThings(honeybadger_things, snapshot());
 	for (i in result){
 		if (result[i][1] == 'string'){
-			honeybadger_log('var', result[i][0] + ':' + honeybadger_base64_encode(result[i][2]));
+			honeybadger_log('Variables', result[i][0] + ':' + honeybadger_base64_encode(result[i][2]));
 		}
 	}
 }, 8000);

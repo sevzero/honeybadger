@@ -73,53 +73,31 @@
 		</div>
 		<div id="collapseThree" class="accordion-body collapse">
 			<div class="panel-body">
-				<pre>
-					{{=submission.submissions.code}}
-				</pre>
+				<pre>{{=submission.submissions.code}}</pre>
 			</div>
 		</div>
 	</div>
 </div>
 
 <div id="identifications"></div>
-<span id="analysis">
-	{{for alert in alerts: }}
-		<div class="alert alert-warning" role="alert">
-			<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-			{{=alert}}
-		</div>
-	{{pass}}
-	
-	<div class="accordion" id="accordion3}}">
-		{{for r in general:}}
-			{{if not general[r]: continue}}
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapse{{=r.replace(' ','')}}">
-						{{=r}} ({{=len(general[r])}})
-					</a>
-				</div>
-				<div id="collapse{{=r.replace(' ','')}}" class="accordion-body collapse">
-					<div class="panel-body">
-						{{for s in general[r]:}}
-						<pre class="{{=r}}_code">{{=s.code}}</pre>
-						{{pass}}
-					</div>
-				</div>
+	<span id="analysis">
+		{{for alert in alerts: }}
+			<div class="alert alert-warning" role="alert">
+					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{=alert}}
 			</div>
 		{{pass}}
-		{{for change_type in dom_changes:}}
+		{{for type in messages: }}
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapse{{=change_type}}">
-						{{=change_type[0].upper() + change_type[1:].lower() + 's'}} ({{=len(dom_changes[change_type])}})
+					<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapse{{=type.replace(' ','')}}">
+						{{=type}} ({{=len(messages[type])}})
 					</a>
 				</div>
-				<div id="collapse{{=change_type}}" class="accordion-body collapse">
+				<div id="collapse{{=type.replace(' ','')}}" class="accordion-body collapse">
 					<div class="panel-body">
-					{{for change in dom_changes[change_type]:}}
-							<pre class="change_code">{{=change}}</pre>
-							{{pass}}
+						{{for value in messages[type]:}}
+							<pre class="{{=type.replace(' ', '')}}_code">{{=value}}</pre>
+						{{pass}}
 					</div>
 				</div>
 			</div>
@@ -142,9 +120,10 @@
 							</thead>
 							<tbody>
 								{{for var in variables:}}
+									{{v = var.split(':')}}
 									<tr class="variable_code">
-										<td style="width: 200px;">{{=var[0]}}</td>
-										<td>{{=var[1]}}</td>
+										<td style="width: 200px;">{{=v[0]}}</td>
+										<td>{{=v[1].decode('base64')}}</td>
 									</tr>
 								{{pass}}
 							</tbody>
@@ -153,5 +132,5 @@
 				</div>
 			</div>
 		{{pass}}
-	</div>
-</span>
+	</span>
+</div>
