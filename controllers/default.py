@@ -150,7 +150,7 @@ def result():
 	if 'Variables' in messages:
 		variables = messages['Variables']
 		del(messages['Variables'])
-	return dict(submission=submission, messages=messages, alerts=alerts, variables=variables)
+	return dict(submission=submission, messages=messages, alerts=set(alerts), variables=variables)
 
 def about():
 	return dict(version=VERSION, author=AUTHOR, contact=CONTACT, website=WEBSITE)
