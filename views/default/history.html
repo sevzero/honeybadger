@@ -15,7 +15,7 @@
 			{{browser_info = util.identifyBrowser(row.browsers.useragent)}}
 			<tr onclick="window.location='{{=URL('result', args=[row.submissions.md5,row.submissions.id])}}'">
 				<td>{{=XML(str(row.submissions.submitted).replace(' ','&nbsp;'))}}</td>
-				<td>{{=row.submissions.title or 'No Title'}}</td>
+				<td><a style="text-decoration:none; color:#333;" href="{{=URL('result', args=[row.submissions.md5,row.submissions.id])}}">{{=row.submissions.title or 'No Title'}}</a></td>
 					<td>
 						<img src="{{=URL('static', 'images/icons/' + browser_info['os'] + '.png')}}"  alt="{{=browser_info['os']}}"/>
 						<img src="{{=URL('static', 'images/icons/' + browser_info['browser'] + '.png')}}" alt="{{=browser_info['browser']}}" />
