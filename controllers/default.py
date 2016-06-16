@@ -151,7 +151,7 @@ def result():
 	if 'Variables' in messages:
 		variables = messages['Variables']
 		del(messages['Variables'])
-	response.title = 'Honeybadger analysis - ' + submission.submissions.title
+	response.title = 'Honeybadger analysis - ' + (submission.submissions.title if submission.submissions.title else 'no title')
 	response.meta.keywords = "Javascript, analysis"
 	response.meta.description = "Analysis of javascript sample (%s). Honeybadger is an automated JavaScript analysis engine designed to identify malicious indicators in obfuscated code." % submission.submissions.title
 	return dict(submission=submission, messages=messages, alerts=set(alerts), variables=variables)
