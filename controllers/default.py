@@ -53,6 +53,7 @@ def wait():
 	return dict(submission_id=submission_id,md5=md5)
 
 def history():
+	response.title = 'Honeybadger - History'
 	results = db(db.submissions.browser_id==db.browsers.id).select(db.submissions.ALL, db.browsers.ALL, orderby=~db.submissions.submitted, limitby=(0, 25))
 	return dict(results=results, util=util)
 
@@ -150,6 +151,9 @@ def result():
 	if 'Variables' in messages:
 		variables = messages['Variables']
 		del(messages['Variables'])
+	response.title = 'Honeybadger analysis - ' + submission.submissions.title
+	response.meta.keywords = "Javascript, analysis"
+	response.meta.description = "Analysis of javascript sample (%s). Honeybadger is an automated JavaScript analysis engine designed to identify malicious indicators in obfuscated code." % submission.submissions.title
 	return dict(submission=submission, messages=messages, alerts=set(alerts), variables=variables)
 
 def about():
