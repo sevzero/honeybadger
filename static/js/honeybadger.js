@@ -66,6 +66,72 @@ function honeybadger_log(type, msg){
 	return xmlhttp.responseText;
 }
 
+// WScript emulation
+
+function Shell(){
+	this.ExpandEnvironmentStrings = function(path){
+		return '/'
+	}
+}
+var honeybadger_wscript_urls = [];
+var honeybadger_wscript_sleep_count = 0;
+function HTTPRequest(){
+	this.open = function(method, url){
+		honeybadger_wscript_urls.push(url);
+		console.log([method, url]);
+		return true;
+	}
+	this.send = function(){
+		return true;
+	}
+	this.readystate = 4;
+	this.ResponseBody = '[Honeybadger dummy response body data]';
+}
+function ADODBstream(){
+	this.open = function(){
+	}
+	this.write = function(data){
+	}
+	this.SaveToFile = function(){
+	}
+	this.close = function(){
+	}
+	this.LoadFromFile = function(file){
+	}
+	this.ReadText = '[Honeybadger dummy ReadText data]';
+}
+var WScript = new Object();
+WScript.CreateObject = function(type){
+	objects = {
+		'WScript.Shell': Shell,
+		'WinHttp.WinHttpRequest.5.1': HTTPRequest,
+		'ADODB.Stream' : ADODBstream
+	}
+	if (objects[type]){
+		return new objects[type]();
+	}
+	else {
+		alert("unknown CreateObject command: " + type);
+	}
+}
+WScript.Sleep = function(){
+	honeybadger_wscript_sleep_count++;
+	if (honeybadger_wscript_sleep_count == 100){
+		console.log('Infinite loop detected')
+		unique_urls = [];
+		for (var i = 0; i < honeybadger_wscript_urls.length; i++){
+			if (unique_urls.indexOf(honeybadger_wscript_urls[i]) == -1){
+				unique_urls.push(honeybadger_wscript_urls[i]);
+			}
+		}
+		for (var i = 0; i < unique_urls.length; i++){
+			honeybadger_log('URL requested using WScript', unique_urls[i]);
+		}
+		window.close();
+	}
+	return
+}
+
 
 // Catch Errors
 window.onerror = function(message, url, lineNumber) {
