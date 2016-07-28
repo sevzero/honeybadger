@@ -66,6 +66,11 @@ function honeybadger_log(type, msg){
 	return xmlhttp.responseText;
 }
 
+// Let's implement some IE specific stuff for better compatibility
+
+var ScriptEngineBuildVersion = function(){return 18315};                                                                                                                                                                     
+var CollectGarbage = function(){};   
+
 // WScript emulation
 
 function Shell(){
@@ -73,6 +78,7 @@ function Shell(){
 		return '/'
 	}
 }
+
 var honeybadger_wscript_urls = [];
 var honeybadger_wscript_sleep_count = 0;
 function HTTPRequest(){
