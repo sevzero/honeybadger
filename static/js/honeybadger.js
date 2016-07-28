@@ -77,6 +77,9 @@ function Shell(){
 	this.ExpandEnvironmentStrings = function(path){
 		return '/'
 	}
+	this.Run = function(path){
+		honeybadger_log('ActiveX', '[RUN] ' + path)
+	}
 }
 
 var honeybadger_wscript_urls = [];
@@ -84,7 +87,7 @@ var honeybadger_wscript_sleep_count = 0;
 function HTTPRequest(){
 	this.open = function(method, url){
 		honeybadger_wscript_urls.push(url);
-		console.log([method, url]);
+		honeybadger_log('ActiveX', '[NET] ' + method + " " + url);
 		return true;
 	}
 	this.send = function(){
@@ -96,30 +99,84 @@ function HTTPRequest(){
 function ADODBstream(){
 	this.open = function(){
 	}
+	this.Open = this.open;
 	this.write = function(data){
 	}
-	this.SaveToFile = function(){
+	this.Write = this.write;
+	this.SaveToFile = function(filename, mode){
+		honeybadger_log('ActiveX', '[WRITE] ' + filename)
 	}
 	this.close = function(){
 	}
+	this.Close = this.close;
 	this.LoadFromFile = function(file){
 	}
 	this.ReadText = '[Honeybadger dummy ReadText data]';
 }
+var honeybadger_files = {};
+function TextFileObject(path){
+	honeybadger_log('ActiveX', '[OPEN] ' + path);
+	this.path = path;
+	this.filedata = 'muffin';
+
+	this.Write = function(filedata){
+		honeybadger_log('ActiveX', '[WRITE] ' + path + " ("+filedata.length + " bytes)");
+		honeybadger_files[path] = filedata;
+		this.filedata = filedata;
+	}
+	this.Close = function(){
+		honeybadger_log('ActiveX', '[CLOSE] ' + path);
+	}
+	this.Read = function(){
+		honeybadger_log('ActiveX', '[READ] ' + path);
+		try{
+			return honeybadger_files[this.path];
+		}
+		catch(err){
+			return '';
+		}
+	}
+	this.ReadLine = function(){
+		return this.Read().split('\n')[0];
+	}
+	this.OpenAsTextStream = function(){return this};
+	this.ReadAll = this.Read;
+}
+
+function FileSystemObject(){
+	this.OpenTextFile = function(filename, iomode, create, format){
+		return new TextFileObject(filename);
+	}
+	this.GetFile = function(filepath){
+		return new TextFileObject(filepath);
+	}
+}
+
+function DOMDocument(){
+	// I have one of those!
+	return document;
+}
+
 var WScript = new Object();
 WScript.CreateObject = function(type){
+	honeybadger_log('ActiveX', '[CREATE] ' + type)
 	objects = {
 		'WScript.Shell': Shell,
 		'WinHttp.WinHttpRequest.5.1': HTTPRequest,
-		'ADODB.Stream' : ADODBstream
+		'ADODB.Stream' : ADODBstream,
+		'Scripting.FileSystemObject': FileSystemObject,
+		'MSXml2.DOMDocument': DOMDocument
 	}
 	if (objects[type]){
+		if (objects[type] == ActiveXObject)
+			return new ActiveXObject(type);
 		return new objects[type]();
 	}
 	else {
-		alert("unknown CreateObject command: " + type);
+		honeybadger_log('Honeybadger', 'Could not emulate ActiveX object ' + type);
 	}
 }
+
 WScript.Sleep = function(){
 	honeybadger_wscript_sleep_count++;
 	if (honeybadger_wscript_sleep_count == 100){
@@ -138,7 +195,9 @@ WScript.Sleep = function(){
 	return
 }
 
-
+function ActiveXObject(type){
+	return WScript.CreateObject(type);
+}
 // Catch Errors
 window.onerror = function(message, url, lineNumber) {
 	honeybadger_log('Errors', lineNumber + ": " + message);
@@ -227,7 +286,7 @@ function compareThings(things1, things2){
 	return changes
 }
 
-// Check for new strings after 8 seconds
+// Check for new strings after 5 seconds
 window.setTimeout(function(){
 	result = compareThings(honeybadger_things, snapshot());
 	for (i in result){
@@ -235,7 +294,7 @@ window.setTimeout(function(){
 			honeybadger_log('Variables', result[i][0] + ':' + honeybadger_base64_encode(result[i][2]));
 		}
 	}
-}, 8000);
+}, 5000);
 
 // Don't want these going off!
 alert = function(){}
