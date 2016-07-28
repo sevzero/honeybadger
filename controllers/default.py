@@ -4,8 +4,8 @@ import time
 import hashlib
 from payload_builder import Payload
 import json
-import util
 from threading import Thread
+util = local_import('util')
 
 VERSION = "v1.6"
 AUTHOR = 'Russell Hole'
@@ -151,10 +151,12 @@ def result():
 	if 'Variables' in messages:
 		variables = messages['Variables']
 		del(messages['Variables'])
+	identification = util.identify(messages);
 	response.title = 'Honeybadger analysis - ' + (submission.submissions.title if submission.submissions.title else 'no title')
-	response.meta.keywords = "Javascript, analysis"
+	response.meta.keywords = "javascript, analysis" + ', exploit kit, ' + identification if identification else ''
 	response.meta.description = "Analysis of javascript sample (%s). Honeybadger is an automated JavaScript analysis engine designed to identify malicious indicators in obfuscated code." % submission.submissions.title
-	return dict(submission=submission, messages=messages, alerts=set(alerts), variables=variables)
+
+	return dict(submission=submission, messages=messages, alerts=set(alerts), variables=variables, identification=identification)
 
 def about():
 	return dict(version=VERSION, author=AUTHOR, contact=CONTACT, website=WEBSITE)

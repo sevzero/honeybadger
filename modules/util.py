@@ -3,6 +3,31 @@
 from gluon import *
 import re
 
+def identify(messages):
+	msg_str = str(messages);
+	identification_checks = [
+		{
+			'msg': "Angler EK",
+			'check': 'var cryptKey = '
+		},
+		{
+			'msg': "KaiXin EK",
+			'check': 'nbnburl'
+		},
+		{
+			'msg': "RIG EK",
+			'check': 'window.ava = true;'
+		},
+		{
+			'msg': "Nuclear EK",
+			'check': 'window.runer = true'
+		},
+	];
+
+	for check in identification_checks:
+		if check['check'] in msg_str:
+			return check['msg']
+
 def identifyBrowser(useragent):
 	return {'os': _getOs(useragent), 'browser': _getBrowser(useragent)}
 

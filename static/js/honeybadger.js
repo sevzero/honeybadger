@@ -137,7 +137,7 @@ function TextFileObject(path){
 		}
 	}
 	this.ReadLine = function(){
-		return this.Read().split('\n')[0];
+		return this.Read().split('\\n')[0];
 	}
 	this.OpenAsTextStream = function(){return this};
 	this.ReadAll = this.Read;

@@ -1,5 +1,4 @@
 {{extend 'layout.html'}}
-<script type="text/javascript" src="{{=URL('static', 'js/identify.js')}}"></script>
 <ul class="nav nav-pills">
 	<li role="presentation"><a href="{{=URL('history')}}">Back to history</a></li>
 	<li role="presentation"><a href="{{=URL('submit')}}">Submit another sample</a></li>
@@ -81,9 +80,14 @@
 
 <div id="identifications"></div>
 	<span id="analysis">
+		{{if identification:}}
+			<div class="alert alert-info" role="alert">
+				<span class="glyphicon glyphicon-record" aria-hidden="true"></span> Identification: {{=identification}}
+			</div>
+		{{pass}}
 		{{for alert in alerts: }}
 			<div class="alert alert-warning" role="alert">
-					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{=alert}}
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> {{=alert}}
 			</div>
 		{{pass}}
 		{{for type in messages: }}
