@@ -111,6 +111,9 @@ function ADODBstream(){
 	this.Close = this.close;
 	this.LoadFromFile = function(file){
 	}
+	this.saveToFile = function(path, mode){
+		honeybadger_log('ActiveX', '[WRITE] ' + path);
+	}
 	this.ReadText = '[Honeybadger dummy ReadText data]';
 }
 var honeybadger_files = {};
@@ -156,16 +159,21 @@ function DOMDocument(){
 	// I have one of those!
 	return document;
 }
-
-var WScript = new Object();
+var WindowsScriptHost = function(){};
+WindowsScriptHost.prototype.toString = function(){
+	return "Windows Script Host";
+}
+var WScript = new WindowsScriptHost();
 WScript.CreateObject = function(type){
 	honeybadger_log('ActiveX', '[CREATE] ' + type)
+	type = type.toLowerCase();
 	objects = {
-		'WScript.Shell': Shell,
-		'WinHttp.WinHttpRequest.5.1': HTTPRequest,
-		'ADODB.Stream' : ADODBstream,
-		'Scripting.FileSystemObject': FileSystemObject,
-		'MSXml2.DOMDocument': DOMDocument
+		'wscript.shell': Shell,
+		'winhttp.winhttprequest.5.1': HTTPRequest,
+		'adodb.stream' : ADODBstream,
+		'scripting.filesystemobject': FileSystemObject,
+		'msxml2.domdocument': DOMDocument,
+		'msxml2.xmlhttp': HTTPRequest
 	}
 	if (objects[type]){
 		if (objects[type] == ActiveXObject)
@@ -195,9 +203,12 @@ WScript.Sleep = function(){
 	return
 }
 
+WScript.Echo = function(data){};
+
 function ActiveXObject(type){
 	return WScript.CreateObject(type);
 }
+
 // Catch Errors
 window.onerror = function(message, url, lineNumber) {
 	honeybadger_log('Errors', lineNumber + ": " + message);
