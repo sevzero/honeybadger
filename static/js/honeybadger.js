@@ -44,8 +44,11 @@ function honeybadger_base64_encode(data) {
 }
 
 // We'll use these later
-honeybadger_eval = eval
-honeybadger_write = document.write
+honeybadger_eval = eval;
+honeybadger_write = document.write;
+
+// Alter some behaviour if we're running as a standalone JS file
+honeybadger_live = typeof honeybadger_reporting_url !== 'undefined';
 
 MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
@@ -54,6 +57,10 @@ honeybadger_collect_dom_objects = ['IFRAME', 'APPLET', 'OBJECT', 'SCRIPT']
 
 // Logging function
 function honeybadger_log(type, msg){
+	console.log(type, msg);
+	if (!honeybadger_live){
+		return;
+	}
 	var xmlhttp = null;
 	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
 		xmlhttp=new XMLHttpRequest();
@@ -155,10 +162,24 @@ function FileSystemObject(){
 	}
 }
 
+function KasperskyKeyboardPlugin(){
+
+}
+
 function DOMDocument(){
 	// I have one of those!
 	return document;
 }
+
+function XMLDOM(){
+	this.loadXML = function(xml){
+		honeybadger_log('ActiveX', '[XML LOAD] ' + xml);
+	}
+	this.parseError = function(){
+		return 0;
+	}
+}
+
 var WindowsScriptHost = function(){};
 WindowsScriptHost.prototype.toString = function(){
 	return "Windows Script Host";
@@ -166,22 +187,30 @@ WindowsScriptHost.prototype.toString = function(){
 var WScript = new WindowsScriptHost();
 WScript.CreateObject = function(type){
 	honeybadger_log('ActiveX', '[CREATE] ' + type)
-	type = type.toLowerCase();
+	ltype = type.toLowerCase();
 	objects = {
 		'wscript.shell': Shell,
 		'winhttp.winhttprequest.5.1': HTTPRequest,
 		'adodb.stream' : ADODBstream,
 		'scripting.filesystemobject': FileSystemObject,
 		'msxml2.domdocument': DOMDocument,
-		'msxml2.xmlhttp': HTTPRequest
+		'microsoft.xmldom': XMLDOM,
+		'msxml2.xmlhttp': HTTPRequest,
+		//'kaspersky.ievirtualkeyboardplugin.javascriptapi.1': KasperskyKeyboardPlugin
 	}
-	if (objects[type]){
+	if (objects[ltype]){
 		if (objects[type] == ActiveXObject)
-			return new ActiveXObject(type);
-		return new objects[type]();
+			return new ActiveXObject(ltype);
+		return new objects[ltype]();
 	}
 	else {
 		honeybadger_log('Honeybadger', 'Could not emulate ActiveX object ' + type);
+		throw({ 
+			description: "The value of property 'newActiveXObject' is null or undefined, not a Function object",
+			message: "The value of property 'newActiveXObject' is null or undefined, not a Function object",
+			name: "TypeError",
+			number: -2146823281
+		});
 	}
 }
 
@@ -210,10 +239,12 @@ function ActiveXObject(type){
 }
 
 // Catch Errors
-window.onerror = function(message, url, lineNumber) {
-	honeybadger_log('Errors', lineNumber + ": " + message);
-	return true;
-};
+if (honeybadger_live){
+	window.onerror = function(message, url, lineNumber) {
+		honeybadger_log('Errors', lineNumber + ": " + message);
+		return true;
+	};
+}
 
 // Catch useragent checks
 honeybadger_ua = window.navigator.userAgent
@@ -298,14 +329,16 @@ function compareThings(things1, things2){
 }
 
 // Check for new strings after 5 seconds
-window.setTimeout(function(){
-	result = compareThings(honeybadger_things, snapshot());
-	for (i in result){
-		if (result[i][1] == 'string'){
-			honeybadger_log('Variables', result[i][0] + ':' + honeybadger_base64_encode(result[i][2]));
+if (honeybadger_live){
+	window.setTimeout(function(){
+		result = compareThings(honeybadger_things, snapshot());
+		for (i in result){
+			if (result[i][1] == 'string'){
+				honeybadger_log('Variables', result[i][0] + ':' + honeybadger_base64_encode(result[i][2]));
+			}
 		}
-	}
-}, 5000);
+	}, 5000);
+}
 
 // Don't want these going off!
 alert = function(){}
