@@ -1,4 +1,5 @@
 import datetime
+import math
 import collections
 import time
 import hashlib
@@ -53,9 +54,34 @@ def wait():
 	return dict(submission_id=submission_id,md5=md5)
 
 def history():
+	results_per_page = 25
 	response.title = 'Honeybadger - History'
-	results = db(db.submissions.browser_id==db.browsers.id).select(db.submissions.ALL, db.browsers.ALL, orderby=~db.submissions.submitted, limitby=(0, 25))
-	return dict(results=results, util=util)
+	page = 1
+	paginator_width = 4
+	last_page = int(math.ceil(db(db.submissions.browser_id==db.browsers.id).count() / results_per_page)) + 1
+	try:
+		page = int(request.args[0])
+		if page < 1 or page > last_page:
+			return redirect(URL('history'))
+	except IndexError:
+		pass
+	if last_page < paginator_width:
+		start = 1
+		end = last_page
+	else:
+		if page + (paginator_width/2) >= last_page:
+			start = last_page - paginator_width
+			end = last_page
+		elif page - (paginator_width/2) <= 1:
+			start = 1
+			end = start + paginator_width
+		else:
+			start = page - (paginator_width/2)
+			end = page + (paginator_width/2)
+	pagination_range = xrange(start, end+1)
+	
+	results = db(db.submissions.browser_id==db.browsers.id).select(db.submissions.ALL, db.browsers.ALL, orderby=~db.submissions.submitted, limitby=((page -1) * results_per_page, page * results_per_page))
+	return dict(page=page, pagination_range=pagination_range, total_pages=last_page, results=results, util=util)
 
 def poll():
 	if not request.vars:

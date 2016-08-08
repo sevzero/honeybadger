@@ -32,3 +32,22 @@
 		{{pass}}
 	</tbody>
 </table>
+<div class="row">
+	<div class="col-md-12">
+		<ul class="pagination">
+			<li class="{{ if page == 1: }}disabled{{pass}}">
+				<a {{if not page == 1: }}rel="prev" href="{{ =URL('history', args=[page-1]) }}"{{pass}}>
+					<span class="glyphicon glyphicon-chevron-left"></span>
+				</a>
+			</li>
+			{{ for i in pagination_range: }}
+				<li class="{{ if i == page: }}active{{ pass }}"><a href="{{=URL('history', args=[i])}}">{{=i}}</a></li>
+			{{ pass }}
+			<li class="{{ if page == total_pages: }}disabled{{pass}}">
+				<a {{if not page == total_pages:}}rel="next" href="{{ =URL('history', args=[page+1]) }}"{{pass}}>
+				 	<span class="glyphicon glyphicon-chevron-right"></span>
+				 </a>
+			 </li>
+		</ul>
+	</div>
+</div><!-- End Pagination -->
