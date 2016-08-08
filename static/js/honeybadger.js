@@ -160,6 +160,10 @@ function FileSystemObject(){
 	this.GetFile = function(filepath){
 		return new TextFileObject(filepath);
 	}
+	this.FileExists = function(filepath){
+		honeybadger_log('ActiveX', '[CHECK] ' + filepath);
+		return false;
+	}
 }
 
 function KasperskyKeyboardPlugin(){
