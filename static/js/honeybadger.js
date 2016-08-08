@@ -237,6 +237,9 @@ WScript.Sleep = function(){
 }
 
 WScript.Echo = function(data){};
+WScript.Quit = function(){};
+WScript.Path = "C:\\Windows\\System32\\wscript.exe";
+
 
 function ActiveXObject(type){
 	return WScript.CreateObject(type);
