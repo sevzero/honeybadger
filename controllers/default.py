@@ -181,6 +181,7 @@ def result():
 	response.title = 'Honeybadger analysis - ' + (submission.submissions.title if submission.submissions.title else 'no title')
 	response.meta.keywords = "javascript, analysis" + (', exploit kit, ' + identification if identification else '')
 	response.meta.description = "Analysis of javascript sample (%s). Honeybadger is an automated JavaScript analysis engine designed to identify malicious indicators in obfuscated code." % submission.submissions.title
+	response.subtitle = submission.submissions.title if submission.submissions.title else 'No title'
 
 	return dict(submission=submission, messages=messages, alerts=set(alerts), variables=variables, identification=identification)
 

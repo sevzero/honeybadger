@@ -89,7 +89,7 @@
             <div class="page-header">
                 <h1>
 					Honeybadger
-                    <small>Obfuscated javascript? Honeybadger don't care!</small>
+					<small>{{='Analysis: ' if response.subtitle else ''}}{{=response.subtitle or 'Javascript Analysis Engine'}}</small>
                 </h1>
             </div>
         </div>
