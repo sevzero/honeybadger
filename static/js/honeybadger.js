@@ -259,10 +259,11 @@ WScript.CreateObject = function(type){
 		'shockwaveflash.shockwaveflash': ShockwaveFlash
 	}
 	if (objects[ltype]){
-		if (objects[type] == ActiveXObject)
+		if (objects[type] == ActiveXObject){
 			o = new ActiveXObject(ltype);
 			delete(ltype);
 			return o;
+		}
 		o = new objects[ltype];
 		delete(ltype);
 		return o;
