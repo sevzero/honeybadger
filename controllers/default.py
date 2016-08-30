@@ -8,7 +8,7 @@ import json
 from threading import Thread
 util = local_import('util')
 
-VERSION = "v1.6"
+VERSION = "v1.7"
 AUTHOR = 'Russell Hole'
 CONTACT = 'russell.hole+honeybadger@gmail.com'
 WEBSITE = 'https://sevzero.github.io/honeybadger'
