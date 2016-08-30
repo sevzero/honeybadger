@@ -80,12 +80,19 @@ var CollectGarbage = function(){};
 
 // WScript emulation
 
+var honeybadger_files = {};
+var honeybadger_registry = {};
+
 function Shell(){
 	this.ExpandEnvironmentStrings = function(path){
 		return '/'
 	}
 	this.Run = function(path){
 		honeybadger_log('ActiveX', '[RUN] ' + path)
+	}
+	this.RegWrite = function(key, value, type){
+		honeybadger_log('ActiveX', '[REGISTRY WRITE] ' + key + ' = ' + value);
+		honeybadger_registry[key] = value;
 	}
 }
 
@@ -98,16 +105,19 @@ function HTTPRequest(){
 		return true;
 	}
 	this.send = function(){
+		this.status = 200;
 		return true;
 	}
 	this.readystate = 4;
 	this.ResponseBody = '[Honeybadger dummy response body data]';
+	this.responseText = '[Honeybadger dummy response body data]';
 }
 function ADODBstream(){
 	this.open = function(){
 	}
 	this.Open = this.open;
 	this.write = function(data){
+		honeybadger_log('ActiveX', '[WRITE] ' + data);
 	}
 	this.Write = this.write;
 	this.SaveToFile = function(filename, mode){
@@ -121,9 +131,11 @@ function ADODBstream(){
 	this.saveToFile = function(path, mode){
 		honeybadger_log('ActiveX', '[WRITE] ' + path);
 	}
+	this.CopyTo = function(path, mode){
+	}
 	this.ReadText = '[Honeybadger dummy ReadText data]';
 }
-var honeybadger_files = {};
+
 function TextFileObject(path){
 	honeybadger_log('ActiveX', '[OPEN] ' + path);
 	this.path = path;
@@ -164,6 +176,9 @@ function FileSystemObject(){
 		honeybadger_log('ActiveX', '[CHECK] ' + filepath);
 		return false;
 	}
+	this.FolderExists = function(path){
+		honeybadger_log('ActiveX', '[CHECK] ' + path);
+	}
 }
 
 function KasperskyKeyboardPlugin(){
@@ -184,6 +199,46 @@ function XMLDOM(){
 	}
 }
 
+function ShockwaveFlash(){
+}
+
+honeybadger_recordset = function(){
+};
+honeybadger_recordset.index = 0;
+honeybadger_recordset.Fields = function(val){
+	return this;
+}
+honeybadger_recordset.Fields.records = [];
+honeybadger_recordset.Fields.Append = function(val){
+	this.records.push(val);
+}
+honeybadger_recordset.Open = function(){};
+honeybadger_recordset.Close = function(){};
+honeybadger_recordset.AddNew = function(){
+	this.Fields.records.push('');
+	this.index = this.Fields.records.length - 1;
+}
+honeybadger_recordset.AppendChunk = function(val){
+	console.log('ActiveX', val);
+	this.Fields.records[this.index] = this.Fields.records[this.index] + val
+}
+honeybadger_recordset.GetChunk = function(val){
+	return this.Fields.records[this.index]
+}
+honeybadger_recordset.Update = function(){}
+honeybadger_recordset.MoveFirst = function(){
+	this.index = 0;
+}
+
+var ADODBrecordset = function(val){
+	this.callme = function(val){
+		return window.hb_recordset;
+	};
+	this.callme.__proto__ = honeybadger_recordset
+	window.hb_recordset = this.callme
+	return this.callme;
+}
+
 var WindowsScriptHost = function(){};
 WindowsScriptHost.prototype.toString = function(){
 	return "Windows Script Host";
@@ -196,16 +251,17 @@ WScript.CreateObject = function(type){
 		'wscript.shell': Shell,
 		'winhttp.winhttprequest.5.1': HTTPRequest,
 		'adodb.stream' : ADODBstream,
+		'adodb.recordset' : ADODBrecordset,
 		'scripting.filesystemobject': FileSystemObject,
 		'msxml2.domdocument': DOMDocument,
 		'microsoft.xmldom': XMLDOM,
 		'msxml2.xmlhttp': HTTPRequest,
-		//'kaspersky.ievirtualkeyboardplugin.javascriptapi.1': KasperskyKeyboardPlugin
+		'shockwaveflash.shockwaveflash': ShockwaveFlash
 	}
 	if (objects[ltype]){
 		if (objects[type] == ActiveXObject)
 			return new ActiveXObject(ltype);
-		return new objects[ltype]();
+		return new objects[ltype];
 	}
 	else {
 		honeybadger_log('Honeybadger', 'Could not emulate ActiveX object ' + type);
@@ -241,7 +297,7 @@ WScript.Quit = function(){};
 WScript.Path = "C:\\Windows\\System32\\wscript.exe";
 
 
-function ActiveXObject(type){
+ActiveXObject = function(type){
 	return WScript.CreateObject(type);
 }
 
