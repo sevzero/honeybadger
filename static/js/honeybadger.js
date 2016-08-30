@@ -85,7 +85,7 @@ var honeybadger_registry = {};
 
 function Shell(){
 	this.ExpandEnvironmentStrings = function(path){
-		return path + '/'
+		return path
 	}
 	this.Run = function(path){
 		honeybadger_log('ActiveX', '[RUN] ' + path)
