@@ -260,8 +260,12 @@ WScript.CreateObject = function(type){
 	}
 	if (objects[ltype]){
 		if (objects[type] == ActiveXObject)
-			return new ActiveXObject(ltype);
-		return new objects[ltype];
+			o = new ActiveXObject(ltype);
+			delete(ltype);
+			return o;
+		o = new objects[ltype];
+		delete(ltype);
+		return o;
 	}
 	else {
 		honeybadger_log('Honeybadger', 'Could not emulate ActiveX object ' + type);
