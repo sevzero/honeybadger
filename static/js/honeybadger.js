@@ -314,8 +314,52 @@ if (honeybadger_live){
 	};
 }
 
+document.honeybadger_createElement = document.createElement;
+document.honeybadger_getElementById = document.getElementById;
+
+honeybadger_array = function(dashstyle, items){
+	this.items = items;
+	this.length = items.length;
+	this.item = function(index){
+		if (this.items.length -1 < index){
+			return index;
+		}
+		return this.items[index];
+	}
+}
+
+function honeybadger_dashstyle(dashstyle){
+	this.dashstyle = dashstyle;
+	this.array = new honeybadger_array(this, dashstyle.split(' '));
+}
+
+document.getElementById = function(element_id){
+	element = document.honeybadger_getElementById(element_id);
+	if (!element){
+		return element;
+	}
+	if (element.nodeName.toLowerCase().endsWith('stroke')){
+		element.watch("dashstyle", function(propertyName, oldValue, newValue){
+			if (newValue.startsWith('1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20')){
+				honeybadger_log('Exploit', 'MS13-009 - COALineDashStyleArray Integer Overflow');
+			}
+			return new honeybadger_dashstyle(newValue);
+		});
+	}
+	return element;
+}
+
+document.createElement = function(obj){
+	console.log('createElement ' + obj);
+	new_obj = document.honeybadger_createElement(obj);
+	if (obj.endsWith('shape') && new_obj._vgRuntimeStyle == undefined){
+		new_obj._vgRuntimeStyle = function(){};
+	}
+	return new_obj;
+};
+
 // Catch useragent checks
-honeybadger_ua = window.navigator.userAgent
+honeybadger_ua = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)" // window.navigator.userAgent
 navigator.__defineGetter__('userAgent', function(){
 	honeybadger_log('Alerts', 'Script checks the browser useragent')
     return honeybadger_ua
