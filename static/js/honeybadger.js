@@ -94,6 +94,10 @@ function Shell(){
 		honeybadger_log('ActiveX', '[REGISTRY WRITE] ' + key + ' = ' + value);
 		honeybadger_registry[key] = value;
 	}
+	this.RegRead = function(key){
+		honeybadger_log('ActiveX', '[REGISTRY READ] ' + key);
+		return 'Honeybadger_dummy_registry_data';
+	}
 }
 
 var honeybadger_wscript_urls = [];
@@ -179,6 +183,28 @@ function FileSystemObject(){
 	this.FolderExists = function(path){
 		honeybadger_log('ActiveX', '[CHECK] ' + path);
 	}
+}
+
+Enumerator = function(items){
+	this.items = items;
+	this.item = function(index){
+		return items[index | 0];
+	}
+}
+
+AutomationObject = function(objPath){
+	this.objPath = objPath;
+	this.ExecQuery = function(query){
+		honeybadger_log('ActiveX', '[QUERY] ' + query);
+		if (query.indexOf('Win32_OperatingSystem') != -1){
+			return [{'Version': 7}];
+		}
+	}
+}
+
+function GetObject(objPath){
+	honeybadger_log('ActiveX', '[GET OBJECT] ' + objPath);
+	return new AutomationObject(objPath);
 }
 
 function KasperskyKeyboardPlugin(){
@@ -297,10 +323,10 @@ WScript.Sleep = function(){
 	return
 }
 
+WScript.sleep = WScript.Sleep
 WScript.Echo = function(data){};
 WScript.Quit = function(){};
 WScript.Path = "C:\\Windows\\System32\\wscript.exe";
-
 
 ActiveXObject = function(type){
 	return WScript.CreateObject(type);
