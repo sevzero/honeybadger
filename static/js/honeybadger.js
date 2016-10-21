@@ -69,7 +69,8 @@ function honeybadger_log(type, msg){
 		return;
 	}
 	var xmlhttp = null;
-	if (window.honeybadger_XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+	// Usual XMLHttpRequest gets overridden later
+	if (window.honeybadger_XMLHttpRequest) {
 		xmlhttp=new honeybadger_XMLHttpRequest();
 	}
 	else{// code for IE6, IE5
@@ -434,6 +435,8 @@ window.__defineGetter__('outerWidth', function(){
 	return 1920;
 });
 
+// Override XMLHttpRequest so we can log requests
+honeybadger_XMLHttpRequest = XMLHttpRequest;
 XMLHttpRequest = HTTPRequest;
 
 // Catch DOM manipulations
