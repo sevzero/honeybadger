@@ -55,6 +55,13 @@ MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 // DOM changes we're interested in
 honeybadger_collect_dom_objects = ['IFRAME', 'APPLET', 'OBJECT', 'SCRIPT']
 
+// If we have to simulate a HTTP request, respond with this dummy data
+honeybadger_net_dummy_data = "{}"//"[Honeybadger dummy data]"
+
+// Scripts often look for an IE useragent. Here we can simulate any useragent
+// (Or set it to window.navigator.userAgent to disable spoofing)
+honeybadger_ua = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)" // window.navigator.userAgent
+
 // Logging function
 function honeybadger_log(type, msg){
 	console.log(type, msg);
@@ -74,14 +81,15 @@ function honeybadger_log(type, msg){
 }
 
 // Let's implement some IE specific stuff for better compatibility
-
-var ScriptEngineBuildVersion = function(){return 18315};                                                                                                                                                                     
+// 18315
+var ScriptEngineBuildVersion = function(){return 545};                                                                                                                                                                     
 var CollectGarbage = function(){};   
 
 // WScript emulation
 
 var honeybadger_files = {};
 var honeybadger_registry = {};
+
 
 function Shell(){
 	this.ExpandEnvironmentStrings = function(path){
@@ -110,11 +118,18 @@ function HTTPRequest(){
 	}
 	this.send = function(){
 		this.status = 200;
+		this.readyState = 4;
+		if (this.onreadystatechange){
+			this.onreadystatechange();
+		}
 		return true;
 	}
+	this.setRequestHeader = function(){
+
+	}
 	this.readystate = 4;
-	this.ResponseBody = '[Honeybadger dummy response body data]';
-	this.responseText = '[Honeybadger dummy response body data]';
+	this.ResponseBody = honeybadger_net_dummy_data
+	this.responseText = honeybadger_net_dummy_data
 }
 function ADODBstream(){
 	this.open = function(){
@@ -156,7 +171,7 @@ function TextFileObject(path){
 	this.Read = function(){
 		honeybadger_log('ActiveX', '[READ] ' + path);
 		try{
-			return honeybadger_files[this.path];
+			return honeybadger_files[this.path] || '';
 		}
 		catch(err){
 			return '';
@@ -182,6 +197,20 @@ function FileSystemObject(){
 	}
 	this.FolderExists = function(path){
 		honeybadger_log('ActiveX', '[CHECK] ' + path);
+	}
+	this.GetParentFolderName = function(path){
+		p = path.split('\\');
+		p.pop();
+		return p.join('\\');
+	}
+	this.BuildPath = function(){
+		return Array.prototype.slice.call(arguments).join('\\');
+	}
+	this.DeleteFile = function(f){
+		honeybadger_log('ActiveX', '[DELETE] ' + f)
+	}
+	this.CreateTextFile = function(f){
+		honeybadger_log('ActiveX', '[CREATE] ' + f)
 	}
 }
 
@@ -270,6 +299,14 @@ WindowsScriptHost.prototype.toString = function(){
 	return "Windows Script Host";
 }
 var WScript = new WindowsScriptHost();
+
+WScript.Arguments = function(){
+	return "";
+}
+
+WScript.ScriptFullName = "c:\\Windows\\System\\wscript.exe";
+
+
 WScript.CreateObject = function(type){
 	honeybadger_log('ActiveX', '[CREATE] ' + type)
 	ltype = type.toLowerCase();
@@ -282,6 +319,7 @@ WScript.CreateObject = function(type){
 		'msxml2.domdocument': DOMDocument,
 		'microsoft.xmldom': XMLDOM,
 		'msxml2.xmlhttp': HTTPRequest,
+		'msxml2.serverxmlhttp': HTTPRequest,
 		'shockwaveflash.shockwaveflash': ShockwaveFlash
 	}
 	if (objects[ltype]){
@@ -385,11 +423,18 @@ document.createElement = function(obj){
 };
 
 // Catch useragent checks
-honeybadger_ua = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)" // window.navigator.userAgent
 navigator.__defineGetter__('userAgent', function(){
-	honeybadger_log('Alerts', 'Script checks the browser useragent')
-    return honeybadger_ua
+	honeybadger_log('Alerts', 'Script checks the browser useragent');
+    return honeybadger_ua;
 });
+
+// Catch viewport size checks
+window.__defineGetter__('outerWidth', function(){
+	honeybadger_log('Alerts', 'Script checks viewport size');
+	return 1920;
+});
+
+XMLHttpRequest = HTTPRequest;
 
 // Catch DOM manipulations
 if (window.MutationObserver){
