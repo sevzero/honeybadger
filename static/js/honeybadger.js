@@ -69,8 +69,8 @@ function honeybadger_log(type, msg){
 		return;
 	}
 	var xmlhttp = null;
-	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-		xmlhttp=new XMLHttpRequest();
+	if (window.honeybadger_XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new honeybadger_XMLHttpRequest();
 	}
 	else{// code for IE6, IE5
 		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
