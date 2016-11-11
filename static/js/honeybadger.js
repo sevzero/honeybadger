@@ -91,7 +91,6 @@ var CollectGarbage = function(){};
 var honeybadger_files = {};
 var honeybadger_registry = {};
 
-
 function Shell(){
 	this.ExpandEnvironmentStrings = function(path){
 		return path
@@ -431,7 +430,8 @@ navigator.__defineGetter__('userAgent', function(){
 
 // Catch viewport size checks
 window.__defineGetter__('outerWidth', function(){
-	honeybadger_log('Alerts', 'Script checks viewport size');
+	// Disabled logging due to FPs
+	//honeybadger_log('Alerts', 'Script checks viewport size');
 	return 1920;
 });
 
