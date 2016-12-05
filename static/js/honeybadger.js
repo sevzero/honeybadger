@@ -320,6 +320,9 @@ WScript.CreateObject = function(type){
 		'microsoft.xmldom': XMLDOM,
 		'msxml2.xmlhttp': HTTPRequest,
 		'msxml2.serverxmlhttp': HTTPRequest,
+		'msxml2.xmlhttp.3.0': HTTPRequest,
+		'msxml2.xmlhttp.6.0': HTTPRequest,
+		'microsoft.xmlhttp': HTTPRequest,
 		'shockwaveflash.shockwaveflash': ShockwaveFlash
 	}
 	if (objects[ltype]){
