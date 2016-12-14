@@ -7,20 +7,24 @@ def identify(messages):
 	msg_str = str(messages);
 	identification_checks = [
 		{
-			'msg': "Angler EK",
+			'msg': 'Angler EK',
 			'check': 'var cryptKey = '
 		},
 		{
-			'msg': "KaiXin EK",
+			'msg': 'KaiXin EK',
 			'check': 'nbnburl'
 		},
 		{
-			'msg': "RIG EK",
+			'msg': 'RIG EK',
 			'check': 'window.ava = true;'
 		},
 		{
-			'msg': "Nuclear EK",
+			'msg': 'Nuclear EK',
 			'check': 'window.runer = true'
+		},
+		{
+			'msg': "Swabfex Downloader",
+			'check': 'topSecretLine = new Function'
 		},
 	];
 
