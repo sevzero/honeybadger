@@ -299,6 +299,8 @@ WindowsScriptHost.prototype.toString = function(){
 	return "Windows Script Host";
 }
 var WScript = new WindowsScriptHost();
+var WSH = WScript
+var wsh = WScript
 
 WScript.Arguments = function(){
 	return "";
