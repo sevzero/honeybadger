@@ -114,6 +114,10 @@ function HTTPRequest(){
 	this.open = function(method, url){
 		honeybadger_wscript_urls.push(url);
 		honeybadger_log('ActiveX', '[NET] ' + method + " " + url);
+		this.ResponseBody = '{Data received from ' + url + '}'
+		this.responseBody = '{Data received from ' + url + '}'
+		this.ResponseText = '{Data received from ' + url + '}'
+		this.responseText = '{Data received from ' + url + '}'
 		return true;
 	}
 	this.send = function(){
@@ -128,8 +132,6 @@ function HTTPRequest(){
 
 	}
 	this.readystate = 4;
-	this.ResponseBody = honeybadger_net_dummy_data
-	this.responseText = honeybadger_net_dummy_data
 }
 function ADODBstream(){
 	this.open = function(){
