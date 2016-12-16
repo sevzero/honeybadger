@@ -126,6 +126,9 @@ function HTTPRequest(){
 		if (this.onreadystatechange){
 			this.onreadystatechange();
 		}
+		if (this.onload){
+			this.onload();
+		}
 		return true;
 	}
 	this.setRequestHeader = function(){
@@ -309,7 +312,7 @@ WScript.Arguments = function(){
 }
 
 WScript.ScriptFullName = "c:\\Windows\\System\\wscript.exe";
-
+XDomainRequest = HTTPRequest;
 
 WScript.CreateObject = function(type){
 	honeybadger_log('ActiveX', '[CREATE] ' + type)
