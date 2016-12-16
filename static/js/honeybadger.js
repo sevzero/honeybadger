@@ -481,6 +481,10 @@ Function.prototype = honeybadger_Function.prototype
 
 // Override evals
 eval = function(code){
+	if (code.indexOf('/*@cc_on ') != -1){
+		code = code.replace(new RegExp('/\\*@cc_on ','g'),'');
+		code = code.replace(new RegExp(' @\\*/','g'),'');
+	}
 	honeybadger_log("Eval", code);
 	return Function.prototype.apply.call(
 		honeybadger_eval, window, arguments
