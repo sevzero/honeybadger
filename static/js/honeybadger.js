@@ -98,6 +98,7 @@ function Shell(){
 	this.Run = function(path){
 		honeybadger_log('ActiveX', '[RUN] ' + path)
 	}
+	this.Exec = this.Run
 	this.RegWrite = function(key, value, type){
 		honeybadger_log('ActiveX', '[REGISTRY WRITE] ' + key + ' = ' + value);
 		honeybadger_registry[key] = value;
@@ -120,6 +121,7 @@ function HTTPRequest(){
 		this.responseText = '{Data received from ' + url + '}'
 		return true;
 	}
+	this.Open = this.open
 	this.send = function(){
 		this.status = 200;
 		this.readyState = 4;
@@ -131,6 +133,7 @@ function HTTPRequest(){
 		}
 		return true;
 	}
+	this.Send = this.send
 	this.setRequestHeader = function(){
 
 	}
@@ -147,13 +150,12 @@ function ADODBstream(){
 	this.SaveToFile = function(filename, mode){
 		honeybadger_log('ActiveX', '[WRITE] ' + filename)
 	}
+	this.savetofile = this.SaveToFile
+	this.saveToFile = this.SaveToFile
 	this.close = function(){
 	}
 	this.Close = this.close;
 	this.LoadFromFile = function(file){
-	}
-	this.saveToFile = function(path, mode){
-		honeybadger_log('ActiveX', '[WRITE] ' + path);
 	}
 	this.CopyTo = function(path, mode){
 	}
@@ -202,6 +204,9 @@ function FileSystemObject(){
 	}
 	this.FolderExists = function(path){
 		honeybadger_log('ActiveX', '[CHECK] ' + path);
+	}
+	this.CreateFolder = function(path){
+		honeybadger_log('ActiveX', '[CREATE DIR] ' + path);
 	}
 	this.GetParentFolderName = function(path){
 		p = path.split('\\');
@@ -376,8 +381,23 @@ WScript.Echo = function(data){};
 WScript.Quit = function(){};
 WScript.Path = "C:\\Windows\\System32\\wscript.exe";
 
+honeybadger_env = {
+	'process': {
+		'env': {
+			'username': 'Administrator'
+		},
+		'call': function(s){
+			return honeybadger_env['process']['env'][s.toLowerCase()]
+		} 
+	}
+}
+
 ActiveXObject = function(type){
-	return WScript.CreateObject(type);
+	obj = WScript.CreateObject(type);
+	obj.Environment = function(str){
+		return honeybadger_env[str.toLowerCase()]['call'];
+	};
+	return obj;
 }
 
 // Catch Errors
