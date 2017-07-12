@@ -98,7 +98,9 @@ function Shell(){
 	this.Run = function(path){
 		honeybadger_log('ActiveX', '[RUN] ' + path)
 	}
+	this.run = this.Run
 	this.Exec = this.Run
+	this.exec = this.Exec
 	this.RegWrite = function(key, value, type){
 		honeybadger_log('ActiveX', '[REGISTRY WRITE] ' + key + ' = ' + value);
 		honeybadger_registry[key] = value;
@@ -134,8 +136,14 @@ function HTTPRequest(){
 		return true;
 	}
 	this.Send = this.send
+	this.setProxy = function (proxy){
+		honeybadger_log('ActiveX', '[NET PROXY] ' + proxy);
+	}
+	this.SetProxy = this.setProxy;
+	this.setproxy = this.setProxy;
 	this.setRequestHeader = function(){
-
+	}
+	this.Option = function(){
 	}
 	this.readystate = 4;
 }
@@ -200,7 +208,7 @@ function FileSystemObject(){
 	}
 	this.FileExists = function(filepath){
 		honeybadger_log('ActiveX', '[CHECK] ' + filepath);
-		return false;
+		return filepath.toLowerCase().startsWith('c:\\windows')
 	}
 	this.FolderExists = function(path){
 		honeybadger_log('ActiveX', '[CHECK] ' + path);
@@ -219,10 +227,37 @@ function FileSystemObject(){
 	this.DeleteFile = function(f){
 		honeybadger_log('ActiveX', '[DELETE] ' + f)
 	}
+	this.Deletefile = this.DeleteFile
+	this.deletefile = this.DeleteFile
 	this.CreateTextFile = function(f){
 		honeybadger_log('ActiveX', '[CREATE] ' + f)
 	}
+	this.GetDrive = function(f){
+		drive = {};
+		drive.FileSystem = 'NTFS';
+		return drive;
+	}
+	this.getDrive = this.GetDrive;
+	this.getdrive = this.GetDrive;
+	this.getDriveName = function(drive){
+		honeybadger_log('ActiveX', '[GET DRIVE] ' + drive)
+	}
+	this.GetDriveName = this.getDriveName;
+	this.getdrivename = this.getDriveName;
+	this.GetSpecialFolder = function(folder){
+		return ['c:\\windows\\system32\\','c:\\windows\\temp\\','c:\\windows\\'][folder - 1]
+	}
+	this.GetTempName = function(){
+		chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
+		tfile = ''
+		for (var i = 0; i < 6; i++)
+			tfile += chars[Math.floor(Math.random() * chars.length)];
+		honeybadger_log('ActiveX', '[GET TEMP NAME] (' + tfile + ')')
+		return tfile
+	}
 }
+
+History = undefined
 
 Enumerator = function(items){
 	this.items = items;
@@ -244,10 +279,6 @@ AutomationObject = function(objPath){
 function GetObject(objPath){
 	honeybadger_log('ActiveX', '[GET OBJECT] ' + objPath);
 	return new AutomationObject(objPath);
-}
-
-function KasperskyKeyboardPlugin(){
-
 }
 
 function DOMDocument(){
@@ -304,6 +335,18 @@ var ADODBrecordset = function(val){
 	return this.callme;
 }
 
+var ScriptingDictionary = function(){
+	this.basedict = {};
+	this.Add = function(key, value){
+		this.basedict[key] = value;
+	}
+	this.add = this.Add;
+	this.Item = function(key){
+		return this.basedict[key];
+	}
+	this.item = this.Item;
+}
+
 var WindowsScriptHost = function(){};
 WindowsScriptHost.prototype.toString = function(){
 	return "Windows Script Host";
@@ -335,7 +378,8 @@ WScript.CreateObject = function(type){
 		'msxml2.xmlhttp.3.0': HTTPRequest,
 		'msxml2.xmlhttp.6.0': HTTPRequest,
 		'microsoft.xmlhttp': HTTPRequest,
-		'shockwaveflash.shockwaveflash': ShockwaveFlash
+		'shockwaveflash.shockwaveflash': ShockwaveFlash,
+		'scripting.dictionary': ScriptingDictionary
 	}
 	if (objects[ltype]){
 		if (objects[type] == ActiveXObject){
@@ -467,7 +511,7 @@ window.__defineGetter__('outerWidth', function(){
 
 // Override XMLHttpRequest so we can log requests
 honeybadger_XMLHttpRequest = XMLHttpRequest;
-XMLHttpRequest = HTTPRequest;
+XMLHttpRequest = undefined;
 
 // Catch DOM manipulations
 if (window.MutationObserver){
@@ -506,6 +550,8 @@ Function.prototype = honeybadger_Function.prototype
 
 // Override evals
 eval = function(code){
+	if (code === undefined)
+		return
 	if (code.indexOf('/*@cc_on ') != -1){
 		code = code.replace(new RegExp('/\\*@cc_on ','g'),'');
 		code = code.replace(new RegExp(' @\\*/','g'),'');
