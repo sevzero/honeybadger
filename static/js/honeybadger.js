@@ -421,9 +421,9 @@ WScript.Sleep = function(){
 }
 
 WScript.sleep = WScript.Sleep
-WScript.Echo = function(data){};
-WScript.Quit = function(){};
-WScript.Path = "C:\\Windows\\System32\\wscript.exe";
+WScript.Echo = WScript.echo = function(data){};
+WScript.Quit = WScript.quit = function(){};
+WScript.Path = WScript.path = "C:\\Windows\\System32\\wscript.exe";
 
 honeybadger_env = {
 	'process': {
